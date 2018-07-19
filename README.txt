@@ -21,6 +21,12 @@ column 3,4,5: x,y,z position in km sqrt(a)/s (multiply by sqrt(a) to get to km/s
 column 6: mass in 10^10 Msun/h (multiply by 10^10 and divide by h to get to Msun)
 
 
+#halo props file
+column 1: halo ID (from SUBFIND)
+column 2,3,4: x,y,z position in ckpc/h
+column 5: halo virial mass (10^10 Msun/h)
+column 6: halo virial radius (ckpc/h)
+
 #Notes:
 -all positions should be subtracted from the center of mass (COM) position of the halo itself
 -h = 0.704
