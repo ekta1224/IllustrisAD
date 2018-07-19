@@ -32,9 +32,11 @@ def age_hist(filename):
     cosmo = FlatLambdaCDM(H0=70.4, Om0=0.2726, Ob0=0.0456)
     tform = [float(cosmo.age(z)/u.Gyr) for z in zform] #time the stars formed in lookback time, not age
     tage = np.array([13.8-t for t in tform])
+    tage = tage[tage <= 5.]
+    print 'number of star particles < 5 Gyr old', len(tage)
     plt.figure()
     plt.hist(tage, bins=20, histtype='step', lw=2, weights=np.ones_like(tage)/len(tage), color='crimson')
-    plt.xlabel('stellare ages [Gyr]')
+    plt.xlabel('stellar ages [Gyr]')
     plt.title('M31 analog - Illustris %s'%filename[10:15])
     plt.savefig('stellar_age_hist_%s.pdf'%filename[10:15])
     plt.close()

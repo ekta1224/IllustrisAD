@@ -1,4 +1,4 @@
-#columns for data files
+#columns for data files (these are identical for the files ending in 'rotated.txt')
 
 #gas file
 column 0,1,2: x,y,z position in ckpc/h (divide by h to get to kpc)
