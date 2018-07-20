@@ -4,8 +4,10 @@ from astropy.cosmology import FlatLambdaCDM
 import astropy.units as u 
 
 '''
--do we try to pair the gas and stars?
--should we smooth the velocities?
+-divides stellar particles into 4 age bins
+-eliminates gas particles that don't have a 'high' fraction of neutral hydrogen
+-construct a rotation curve for the gas and star particles, binned radially
+-calculates the asymmetric drift at each radial pin and outputs a histogram to compare the four age bins
 '''
 
 halo = '361428'
@@ -14,6 +16,7 @@ halo = '361428'
 star_x, star_y, star_z, star_vx, star_vy, star_vz, star_mass_all, star_factor = np.loadtxt('../data/M31analog_{}_star_properties_rotated.txt'.format(halo), usecols=(0, 1, 2, 3, 4, 5, 6, 7,), unpack = True) 
 gas_x, gas_y, gas_z, gas_vx, gas_vy, gas_vz, gas_mass_all, gas_fraction = np.loadtxt('../data/M31analog_{}_gas_properties_rotated.txt'.format(halo), usecols=(0, 1, 2, 3, 4, 5, 6, 7,), unpack = True)
 
+#Illustric value
 h = 0.704
 
 #calculate distance from center-- we don't need to deproject the position (yay simulations)
@@ -137,7 +140,7 @@ star2_ad = star2_ad[~np.isnan(star2_ad)]
 star3_ad = star3_ad[~np.isnan(star3_ad)]
 star4_ad = star4_ad[~np.isnan(star4_ad)]
 
-#plots-- 4 rotation curves and 1 histogram of AD
+#plots-- 1 plot of rotation curves and 1 histogram of AD
 plt.scatter(r_bins[:-1], gas_avg_vrot[:-1], c = 'darkgrey', alpha = 0.4, label='gas')
 plt.scatter(r_bins[:-1], star1_avg_vrot[:-1], c = 'b', alpha = 0.4, label='30 Myr')
 plt.scatter(r_bins[:-1], star2_avg_vrot[:-1], c = 'm', alpha = 0.4, label='400 Myr')
@@ -148,7 +151,7 @@ plt.xlim(0,20)
 plt.ylabel(r'$ \rm Rotation\ Velocity:\ \itv_{\rm rot}\ \rm(km\ s^{-1})$', fontsize=13)
 plt.xlabel(r'$\rm Radial\ Distance:\ \it r\ \rm (kpc)$', fontsize=13)
 plt.legend(loc=4)
-plt.savefig('{}_rotation_curve.pdf'.format(halo))
+plt.savefig('/Users/amandaquirk/Documents/Illustris/plots/rc/{}_rotation_curve.pdf'.format(halo))
 plt.close()
 
 plt.hist(star1_ad[:-1], bins=range(-70, 70, 10), label='30 Myr', normed=1, histtype='step', linewidth=1.6,linestyle='--',stacked=True,fill=False, color='b')
@@ -158,4 +161,8 @@ plt.hist(star4_ad[:-1], bins=range(-70, 70, 10), label='4 Gyr', normed=1, histty
 plt.legend(loc=1, frameon=False)
 plt.xlim(-75,70)
 plt.xlabel(r'$ \rm Asymmetric\ Drift:\ \itv_{a}\ \rm(km\ s^{-1})$', fontsize=13)
-plt.savefig('{}_asymmetric_drift_hist.pdf'.format(halo))
+plt.savefig('/Users/amandaquirk/Documents/Illustris/plots/hist/{}_asymmetric_drift_hist.pdf'.format(halo))
+
+#save data to file
+np.savetxt('../data/{}_vrot.txt'.format(halo), np.c_[r_bins[:-1], gas_avg_vrot[:-1], star1_avg_vrot[:-1], star2_avg_vrot[:-1], star3_avg_vrot[:-1], star4_avg_vrot[:-1]], fmt='%1.16f', delimiter=' ', header='r bin (kpc), avg v_rot gas (km/s), avg v_rot star 1 (km/s), avg v_rot star 2 (km/s), avg v_rot star 3 (km/s), avg v_rot star 4 (km/s)')
+
