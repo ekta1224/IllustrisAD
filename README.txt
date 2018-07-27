@@ -27,7 +27,7 @@ column 1,2,3: x,y,z position in ckpc/h
 column 4,5,6: x,y,z velocities (see notes above)
 column 7: halo virial mass (10^10 Msun/h)
 column 8: halo virial radius (ckpc/h)
+column 9: time of the last (4:1) major merger in lookback time (Gyr) -- if None, value of 13.8 Gyr is assigned
 
 #Notes:
--all positions should be subtracted from the center of mass (COM) position of the halo itself
 -h = 0.704
