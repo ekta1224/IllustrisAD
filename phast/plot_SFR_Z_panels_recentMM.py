@@ -83,3 +83,4 @@ for id in ids:
     #plt.savefig('%s_sfr_z.pdf'%id)
     #plt.savefig('./norecentMMplots/%s_sfr_z.png'%id, dpi=300)
     plt.savefig('./recentMMplots/%s_recentMM_sfr_z.png'%id, dpi=300)
+    plt.close()
