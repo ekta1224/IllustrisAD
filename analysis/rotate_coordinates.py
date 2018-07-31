@@ -1,4 +1,19 @@
 import numpy as np
+import os
+
+def COMdefine(a,b,c,m):
+    # Function to compute the center of mass position or velocity generically
+    # input: array (a,b,c) of positions or velocities and the mass
+    # returns: 3 floats  (the center of mass coordinates)
+    
+        # xcomponent Center of mass  
+        Acom = np.sum(a*m)/np.sum(m)
+        # ycomponent Center of mass
+        Bcom = np.sum(b*m)/np.sum(m)
+        # zcomponent
+        Ccom = np.sum(c*m)/np.sum(m)
+
+        return Acom, Bcom, Ccom
 
 def RotateFrame(posI,velI):
     # input:  3D array of positions and velocities
@@ -36,13 +51,23 @@ def RotateFrame(posI,velI):
 
 def COM(id):
     halo = np.loadtxt('../data/M31analogs_halo_props.txt')
+
     mask = np.where(halo[:,0] == id)[0][0]
     # get the halo COM position and velocity -- should this be the halo COM? or respective to each particle type?
     r1 = np.array([halo[:,1][mask], halo[:,2][mask], halo[:,3][mask]])
     v1 = np.array([halo[:,4][mask], halo[:,5][mask], halo[:,6][mask]])
-    
+    #print r1, v1
+
     #GAS
     gas = np.loadtxt('../data/M31analog_%s_gas_properties.txt'%id)
+    m = gas[:,6]
+    nh = gas[:,7]
+    sfr = gas[:,8]
+    gz = gas[:,9]
+
+    #r1 = COMdefine(gas[:,0], gas[:,1], gas[:,2], m*1e10/0.704)
+    #v1 = COMdefine(gas[:,3], gas[:,4], gas[:,5], m*1e10/0.704)
+
     x = gas[:,0] - r1[0]
     y = gas[:,1] - r1[1]
     z = gas[:,2] - r1[2]
@@ -52,11 +77,10 @@ def COM(id):
     vy = gas[:,4] - v1[1]
     vz = gas[:,5] - v1[2]
     v2 = np.array([vx,vy,vz]).T
-    
-    m = gas[:,6]
-    nh = gas[:,7]
+        
     newr, newv = RotateFrame(r2, v2)
-    np.savetxt('../data/M31analog_%s_gas_properties_rotated.txt'%id, np.column_stack((newr[:,0], newr[:,1], newr[:,2], newv[:,0], newv[:,1], newv[:,2],m, nh)), delimiter="  ")
+    np.savetxt('../data/M31analog_%s_gas_properties_rotated.txt'%id, np.column_stack((newr[:,0], newr[:,1], newr[:,2], newv[:,0], newv[:,1], newv[:,2],m, nh, sfr, gz)), delimiter="  ")
+    
 
     #STARS
     stars = np.loadtxt('../data/M31analog_%s_star_properties.txt'%id)
@@ -72,30 +96,18 @@ def COM(id):
     
     m = stars[:,6]
     tform = stars[:,7]    
+    gz = stars[:,8]
     newr, newv = RotateFrame(r2, v2)
 
-    np.savetxt('../data/M31analog_%s_star_properties_rotated.txt'%id, np.column_stack((newr[:,0], newr[:,1], newr[:,2], newv[:,0], newv[:,1], newv[:,2],m, tform)), delimiter="  ")
-
-    # DM
-    dm = np.loadtxt('../data/M31analog_%s_dm_properties.txt'%id)
-    x = dm[:,0] - r1[0]
-    y = dm[:,1] - r1[1]
-    z = dm[:,2] - r1[2]
-    r2 = np.array([x,y,z]).T 
-    
-    vx = dm[:,3] - v1[0]
-    vy = dm[:,4] - v1[1]
-    vz = dm[:,5] - v1[2]
-    v2 = np.array([vx,vy,vz]).T
-    
-    m = dm[:,6]
-    newr, newv = RotateFrame(r2, v2)
-    np.savetxt('../data/M31analog_%s_dm_properties_rotated.txt'%id, np.column_stack((newr[:,0], newr[:,1], newr[:,2], newv[:,0], newv[:,1], newv[:,2],m)), delimiter="  ")
+    np.savetxt('../data/M31analog_%s_star_properties_rotated.txt'%id, np.column_stack((newr[:,0], newr[:,1], newr[:,2], newv[:,0], newv[:,1], newv[:,2],m, tform, gz)), delimiter="  ")
 
     return 0
 
 
 if __name__ == "__main__":
 
-    COM(361428)
-    #RotateFrame(r,v)
+    ids = np.loadtxt('../data/M31analogs_halo_props.txt')[:,0]
+    for id in ids:
+        print id
+        COM(int(id))
+    
