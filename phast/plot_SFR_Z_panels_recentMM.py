@@ -11,13 +11,16 @@ from cosmo_tools import time, snapnum2z
 #matplotlib.rcParams['text.usetex'] = True
 
 def per_bi(x1, y1, x2, y2):
-    '''return the slope and intercept of the perpendicular bisector between two points'''
+    '''return the slope and intercept of the perpendicular bisector that passes through the center of the analog
+    Inputs: x1, y1 are the location of the secondary
+            x2, y2 are the location of the center '''
     mid = ((x1+x2)/2., (y1+y2)/2.)
     print mid
     slope = (y2-y1)/(x2-x1)
     print slope
     m = (1./slope)*-1.
-    b = mid[1] - (mid[0]*m)
+    #b = mid[1] - (mid[0]*m)
+    b = y2 - (x2*m)
     return m,b
 
     
@@ -86,8 +89,6 @@ for id in ids:
     plt.ylabel('Y [kpc]')
     plt.tight_layout()
     plt.figtext(0.6, 0.85, 'merger time: %s Gyr' %round(time(snapnum2z(orbit[:,0][0]+1)),2))
-    #plt.savefig('%s_sfr_z.pdf'%id)
-    #plt.savefig('./norecentMMplots/%s_sfr_z.png'%id, dpi=300)
     plt.savefig('./recentMMplots/%s_recentMM_sfr_z.png'%id, dpi=300)
     plt.close()
 
@@ -99,7 +100,8 @@ for id in ids:
     print len(ppx2), len(ppy2)
     right2 = (ppy2 <= yrange2)
     left2 = (ppy2 > yrange2)
-    
+
+
     print len(ppgz[left]), len(ppgz[right])
     print len(ppsfr2[left2]), len(ppsfr2[right2])
 
