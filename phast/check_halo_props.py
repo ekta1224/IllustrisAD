@@ -1,6 +1,7 @@
 import numpy as np
 
-data = np.loadtxt('../data/M31analogs_halo_props.txt')
+#data = np.loadtxt('../data/M31analogs_halo_props.txt')
+data = np.loadtxt('../data/M31analogs_halo_props_noM33.txt')
 ids = data[:,0]
 mmt = data[:,9]
 mstar = data[:,10]/0.704*1e10
@@ -12,4 +13,4 @@ print len(mmt[(mmt >=1.)*(mmt <=4.)*(mstar >= 5e10)*(mstar <= 2e11)]), mmt[(mmt 
 print len(mmt[(mmt >= 8.)*(mstar >= 5e10)*(mstar <= 2e11)])
 
 #np.savetxt('M31analogs_noMM8Gyr_mstar.txt', ids[(mmt >= 8.)*(mstar >= 5e10)*(mstar <= 2e11)])
-np.savetxt('M31analogs_MM1_4Gyr_mstar.txt', ids[(mmt >=1.)*(mmt <=4.)*(mstar >= 5e10)*(mstar <= 2e11)])
+#np.savetxt('M31analogs_MM1_4Gyr_mstar.txt', ids[(mmt >=1.)*(mmt <=4.)*(mstar >= 5e10)*(mstar <= 2e11)])
