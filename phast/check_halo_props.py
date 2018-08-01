@@ -14,3 +14,5 @@ print len(mmt[(mmt >= 8.)*(mstar >= 5e10)*(mstar <= 2e11)])
 
 #np.savetxt('M31analogs_noMM8Gyr_mstar.txt', ids[(mmt >= 8.)*(mstar >= 5e10)*(mstar <= 2e11)])
 #np.savetxt('M31analogs_MM1_4Gyr_mstar.txt', ids[(mmt >=1.)*(mmt <=4.)*(mstar >= 5e10)*(mstar <= 2e11)])
+np.savetxt('M31analogs_noMM8Gyr_mstar_noM33.txt', ids[(mmt >= 8.)*(mstar >= 5e10)*(mstar <= 2e11)])
+np.savetxt('M31analogs_MM1_4Gyr_mstar_noM33.txt', ids[(mmt >=1.)*(mmt <=4.)*(mstar >= 5e10)*(mstar <= 2e11)])
