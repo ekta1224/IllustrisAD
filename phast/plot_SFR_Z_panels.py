@@ -81,9 +81,9 @@ for id in ids:
 
     left_z.append(np.mean(ppgz[left]))
     right_z.append(np.mean(ppgz[right]))
-    left_sfr.append(np.mean(ppsfr2[left2]))
-    right_sfr.append(np.mean(ppsfr2[right2]))
+    left_sfr.append(np.sum(ppsfr2[left2]))
+    right_sfr.append(np.sum(ppsfr2[right2]))
 
-np.savetxt('M31analogs_norecentMM_mean_props_noM33required.txt', np.column_stack((left_z, right_z, left_sfr, right_sfr)), delimiter="  ")
+np.savetxt('M31analogs_norecentMM_mean_props_summed_noM33required.txt', np.column_stack((left_z, right_z, left_sfr, right_sfr)), delimiter="  ")
     
     
