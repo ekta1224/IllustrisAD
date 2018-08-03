@@ -49,9 +49,10 @@ def RotateFrame(posI,velI):
     return pos, vel
 
 
-def COM(id):
+def COM(id, noM33=False):
     halo = np.loadtxt('../data/M31analogs_halo_props.txt')
-
+    if noM33:
+	    halo = np.loadtxt('../data/M31analogs_halo_props_noM33.txt')
     mask = np.where(halo[:,0] == id)[0][0]
     # get the halo COM position and velocity -- should this be the halo COM? or respective to each particle type?
     r1 = np.array([halo[:,1][mask], halo[:,2][mask], halo[:,3][mask]])
@@ -64,9 +65,6 @@ def COM(id):
     nh = gas[:,7]
     sfr = gas[:,8]
     gz = gas[:,9]
-
-    #r1 = COMdefine(gas[:,0], gas[:,1], gas[:,2], m*1e10/0.704)
-    #v1 = COMdefine(gas[:,3], gas[:,4], gas[:,5], m*1e10/0.704)
 
     x = gas[:,0] - r1[0]
     y = gas[:,1] - r1[1]
@@ -103,11 +101,59 @@ def COM(id):
 
     return 0
 
+def COM_calculate(id, snap):
+    ''' this is to rotate the data obtained to create SFHs only'''
+
+    #GAS
+    gas = np.loadtxt('../phast/M31analog_%s_gas_properties_snap%s.txt'%(id,snap))
+    m = gas[:,6]
+    nh = gas[:,7]
+    sfr = gas[:,8]
+    gz = gas[:,9]
+
+    r1 = COMdefine(gas[:,0], gas[:,1], gas[:,2], m*1e10/0.704)
+    v1 = COMdefine(gas[:,3], gas[:,4], gas[:,5], m*1e10/0.704)
+
+    x = gas[:,0] - r1[0]
+    y = gas[:,1] - r1[1]
+    z = gas[:,2] - r1[2]
+    r2 = np.array([x,y,z]).T 
+    
+    vx = gas[:,3] - v1[0]
+    vy = gas[:,4] - v1[1]
+    vz = gas[:,5] - v1[2]
+    v2 = np.array([vx,vy,vz]).T
+        
+    newr, newv = RotateFrame(r2, v2)
+    np.savetxt('../phast/M31analog_%s_gas_properties_snap%s_rotated.txt'%(id, snap), np.column_stack((newr[:,0], newr[:,1], newr[:,2], newv[:,0], newv[:,1], newv[:,2],m, nh, sfr, gz)), delimiter="  ")
 
 if __name__ == "__main__":
+    #rotate additional analogs that don't have to have an M33
+    orig_subids = np.loadtxt('../data/M31analog_IDs_IllustrisAD.txt')
+    add_subids = np.concatenate((np.loadtxt('../phast/M31analogs_MM1_4Gyr_mstar_noM33.txt'),np.loadtxt('../phast/M31analogs_noMM8Gyr_mstar_noM33.txt')))
+    print len(add_subids)
+    subids = []
+    for i in add_subids:
+        if i in orig_subids:
+            continue
+        else:
+            subids.append(i)
+    print len(subids)
 
+    for id in subids:
+        print id
+        COM(int(id), noM33=True)
+
+    assert False
     ids = np.loadtxt('../data/M31analogs_halo_props.txt')[:,0]
     for id in ids:
         print id
         COM(int(id))
+
+    assert False
     
+    ids = np.loadtxt('../phast/M31analogs_MM1_4Gyr_mstar.txt')
+    snaps = [98, 112, 121, 126, 129, 131, 132, 133, 134]
+    id = ids[0]
+    for snap in snaps:
+        COM_calculate(int(id), snap)

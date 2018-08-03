@@ -11,7 +11,7 @@ from cosmo_tools import time, snapnum2z
 #matplotlib.rcParams['text.usetex'] = True
 
 #IDs for M31 analogs with not major merger in the last 8 Gyr and a stellar mass cut of 5e10-2e11 applied
-ids = np.loadtxt('M31analogs_noMM8Gyr_mstar.txt')
+ids = np.loadtxt('M31analogs_noMM8Gyr_mstar_noM33.txt')
 
 left_sfr = []
 right_sfr = []
@@ -84,6 +84,6 @@ for id in ids:
     left_sfr.append(np.mean(ppsfr2[left2]))
     right_sfr.append(np.mean(ppsfr2[right2]))
 
-np.savetxt('M31analogs_norecentMM_mean_props.txt', np.column_stack((left_z, right_z, left_sfr, right_sfr)), delimiter="  ")
+np.savetxt('M31analogs_norecentMM_mean_props_noM33required.txt', np.column_stack((left_z, right_z, left_sfr, right_sfr)), delimiter="  ")
     
     
