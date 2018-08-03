@@ -14,9 +14,10 @@ from matplotlib.ticker import FuncFormatter
 snaps = [98, 112, 121, 126, 129, 131, 132, 133, 134]
 #IDs for M31 analogs with a major merger in the last 1-4 Gyr and a stellar mass cut of 5e10-2e11 applied
 ids = np.loadtxt('M31analogs_MM1_4Gyr_mstar.txt')
+print len(ids)
 
 for id in ids:
-
+    print id
     left_sfr = []
     right_sfr = []
     times = []
@@ -24,7 +25,7 @@ for id in ids:
     for snap in snaps:
         print int(id)
         #load gas data
-        ppx2, ppy2, ppz2, ppvx2, ppvy2, ppvz2, ppm2, ppnh2, ppsfr2, ppgz2 = np.loadtxt('M31analog_%s_gas_properties_snap%s_rotated.txt'%(int(id), snap), usecols=(0, 1, 2, 3, 4, 5, 6, 7,8,9), unpack = True)
+        ppx2, ppy2, ppz2, ppvx2, ppvy2, ppvz2, ppm2, ppnh2, ppsfr2, ppgz2 = np.loadtxt('./SFHs/M31analog_%s_gas_properties_snap%s_rotated.txt'%(int(id), snap), usecols=(0, 1, 2, 3, 4, 5, 6, 7,8,9), unpack = True)
         print 'SFR min, max', np.min(ppsfr2), np.max(ppsfr2)
 
         #load orbit data
@@ -44,9 +45,9 @@ for id in ids:
         left2 = (ppy2 > yrange2)
 
         print 'halves', len(ppsfr2[left2]), len(ppsfr2[right2])
-        left_sfr.append(np.mean(ppsfr2[left2]))
-        right_sfr.append(np.mean(ppsfr2[right2]))
+        left_sfr.append(np.sum(ppsfr2[left2]))
+        right_sfr.append(np.sum(ppsfr2[right2]))
         times.append(time(snapnum2z(snap)))
 
 
-    np.savetxt('%s_SFR_time.txt'%int(id), np.column_stack((times, left_sfr, right_sfr)), delimiter="  ")
+    np.savetxt('%s_SFR_time_summed.txt'%int(id), np.column_stack((times, left_sfr, right_sfr)), delimiter="  ")

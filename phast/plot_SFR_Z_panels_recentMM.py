@@ -53,9 +53,13 @@ if __name__ == "__main__":
 
         #load orbit data
         orbit = np.loadtxt('M31analogs_major_merger_orbit_%s.txt'%id)
-        mask = np.where(orbit[:,0] == 103)[0][0] #snap 110 = 3.96 lookback Gyr, 103= 5.08 Gyr
-        xs = orbit[:,1][:mask+1]
-        ys = orbit[:,2][:mask+1]
+
+        #mask = np.where(orbit[:,0] == 103)[0][0] #snap 110 = 3.96 lookback Gyr, 103= 5.08 Gyr
+        #xs = orbit[:,1][:mask+1]
+        #ys = orbit[:,2][:mask+1]
+        
+        xs = orbit[:,1]
+        ys = orbit[:,2]
 
         # plot
         plt.figure(figsize=(13,6))

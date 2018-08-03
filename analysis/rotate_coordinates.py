@@ -105,7 +105,7 @@ def COM_calculate(id, snap):
     ''' this is to rotate the data obtained to create SFHs only'''
 
     #GAS
-    gas = np.loadtxt('../phast/M31analog_%s_gas_properties_snap%s.txt'%(id,snap))
+    gas = np.loadtxt('../phast/SFHs/M31analog_%s_gas_properties_snap%s.txt'%(id,snap))
     m = gas[:,6]
     nh = gas[:,7]
     sfr = gas[:,8]
@@ -125,9 +125,17 @@ def COM_calculate(id, snap):
     v2 = np.array([vx,vy,vz]).T
         
     newr, newv = RotateFrame(r2, v2)
-    np.savetxt('../phast/M31analog_%s_gas_properties_snap%s_rotated.txt'%(id, snap), np.column_stack((newr[:,0], newr[:,1], newr[:,2], newv[:,0], newv[:,1], newv[:,2],m, nh, sfr, gz)), delimiter="  ")
+    np.savetxt('../phast/SFHs/M31analog_%s_gas_properties_snap%s_rotated.txt'%(id, snap), np.column_stack((newr[:,0], newr[:,1], newr[:,2], newv[:,0], newv[:,1], newv[:,2],m, nh, sfr, gz)), delimiter="  ")
 
 if __name__ == "__main__":
+    ids = np.loadtxt('../phast/M31analogs_MM1_4Gyr_mstar.txt')
+    print len(ids)
+    snaps = [98, 112, 121, 126, 129, 131, 132, 133, 134]
+    for id in ids:
+        for snap in snaps:
+            COM_calculate(int(id), snap)
+    assert False
+
     #rotate additional analogs that don't have to have an M33
     orig_subids = np.loadtxt('../data/M31analog_IDs_IllustrisAD.txt')
     add_subids = np.concatenate((np.loadtxt('../phast/M31analogs_MM1_4Gyr_mstar_noM33.txt'),np.loadtxt('../phast/M31analogs_noMM8Gyr_mstar_noM33.txt')))
@@ -150,10 +158,3 @@ if __name__ == "__main__":
         print id
         COM(int(id))
 
-    assert False
-    
-    ids = np.loadtxt('../phast/M31analogs_MM1_4Gyr_mstar.txt')
-    snaps = [98, 112, 121, 126, 129, 131, 132, 133, 134]
-    id = ids[0]
-    for snap in snaps:
-        COM_calculate(int(id), snap)
