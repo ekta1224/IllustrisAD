@@ -16,11 +16,15 @@ snaps = [98, 112, 121, 126, 129, 131, 132, 133, 134]
 ids = np.loadtxt('M31analogs_MM1_4Gyr_mstar.txt')
 print len(ids)
 
-for id in ids:
+remloc = ['right', 'left', 'left','left','right', 'right']#side that merger is located
+
+for id,rem in zip(ids,remloc):
     print id
     left_sfr = []
     right_sfr = []
     times = []
+    rem_sfr = []
+    norem_sfr = []
 
     for snap in snaps:
         print int(id)
@@ -49,5 +53,13 @@ for id in ids:
         right_sfr.append(np.sum(ppsfr2[right2]))
         times.append(time(snapnum2z(snap)))
 
+        if rem == 'left':
+            rem_sfr.append(np.sum(ppsfr2[left2]))
+            norem_sfr.append(np.sum(ppsfr2[right2]))
 
-    np.savetxt('%s_SFR_time_summed.txt'%int(id), np.column_stack((times, left_sfr, right_sfr)), delimiter="  ")
+        if rem =='right':
+            rem_sfr.append(np.sum(ppsfr2[right2]))
+            norem_sfr.append(np.sum(ppsfr2[left2]))
+
+   # np.savetxt('%s_SFR_time_summed.txt'%int(id), np.column_stack((times, left_sfr, right_sfr)), delimiter="  ")
+    np.savetxt('%s_SFR_time_summed_remloc.txt'%int(id), np.column_stack((times,rem_sfr, norem_sfr)), delimiter="  ")
