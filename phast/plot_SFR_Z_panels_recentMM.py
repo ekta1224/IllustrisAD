@@ -25,7 +25,7 @@ def per_bi(x1, y1, x2, y2):
 
 if __name__ == "__main__":
     #IDs for M31 analogs with a major merger in the last 1-4 Gyr and a stellar mass cut of 5e10-2e11 applied
-    ids = np.loadtxt('M31analogs_MM1_4Gyr_mstar_noM33.txt')
+    ids = np.loadtxt('M31analogs_MM1_4Gyr_mstar.txt')
 
     left_sfr = []
     right_sfr = []
@@ -54,9 +54,9 @@ if __name__ == "__main__":
         #load orbit data
         orbit = np.loadtxt('M31analogs_major_merger_orbit_%s.txt'%id)
 
-        #mask = np.where(orbit[:,0] == 103)[0][0] #snap 110 = 3.96 lookback Gyr, 103= 5.08 Gyr
-        #xs = orbit[:,1][:mask+1]
-        #ys = orbit[:,2][:mask+1]
+        mask = np.where(orbit[:,0] == 103)[0][0] #snap 110 = 3.96 lookback Gyr, 103= 5.08 Gyr
+        xs = orbit[:,1][:mask+1]
+        ys = orbit[:,2][:mask+1]
         
         xs = orbit[:,1]
         ys = orbit[:,2]
@@ -72,8 +72,8 @@ if __name__ == "__main__":
         yrange = m*ppx+b
         plt.plot(ppx, yrange, '--', c='gray')
         plt.colorbar(label=r'metallicity $M_Z/M_{gas}$')
-        plt.xlim(-75,75)
-        plt.ylim(-75,75)
+        plt.xlim(-150,150)
+        plt.ylim(-150,150)
         plt.title('%s (stars)'%id)
         plt.xlabel('X [kpc]')
         plt.ylabel('Y [kpc]')
@@ -93,7 +93,7 @@ if __name__ == "__main__":
         plt.ylabel('Y [kpc]')
         plt.tight_layout()
         plt.figtext(0.6, 0.85, 'merger time: %s Gyr' %round(time(snapnum2z(orbit[:,0][0]+1)),2))
-        plt.savefig('./recentMMplots/%s_recentMM_sfr_z.png'%id, dpi=300)
+        plt.savefig('./recentMMplots/%s_recentMM_sfr_z_ext.png'%id, dpi=300)
         plt.close()
 
         #save the mean SFR and metallicity of each half
@@ -114,4 +114,4 @@ if __name__ == "__main__":
         left_sfr.append(np.sum(ppsfr2[left2]))
         right_sfr.append(np.sum(ppsfr2[right2]))
 
-    np.savetxt('M31analogs_recentMM_mean_props_noM33required_summed.txt', np.column_stack((left_z, right_z, left_sfr, right_sfr)), delimiter="  ")
+    #np.savetxt('M31analogs_recentMM_mean_props_noM33required_summed.txt', np.column_stack((left_z, right_z, left_sfr, right_sfr)), delimiter="  ")
