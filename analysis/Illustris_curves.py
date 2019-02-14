@@ -68,6 +68,16 @@ for halo in halos:
 	star_vy = star_vy[not_wind]
 	star_vz = star_vz[not_wind]
 	star_factor = star_factor[not_wind]
+
+	#get rid of particles that are too distant in the z direction
+	close = star_z / h <= 20
+	star_x = star_x[close]
+	star_y = star_y[close]
+	star_z = star_z[close]
+	star_vx = star_vx[close]
+	star_vy = star_vy[close]
+	star_vz = star_vz[close]
+	star_factor = star_factor[close]
 	
 	star_vrad_all = radial_v(star_x, star_y, star_z, star_vx, star_vy, star_vz) #km/s
 	star_r_all = distance(star_x / h, star_y / h, star_z / h) #kpc
@@ -82,6 +92,15 @@ for halo in halos:
 	gas_vx = gas_vx[neutral_gas]
 	gas_vy = gas_vy[neutral_gas]
 	gas_vz = gas_vz[neutral_gas]
+
+	#get rid of particles that are too distant in the z direction
+	close = gas_z / h <= 20
+	gas_x = gas_x[close]
+	gas_y = gas_y[close]
+	gas_z = gas_z[close]
+	gas_vx = gas_vx[close]
+	gas_vy = gas_vy[close]
+	gas_vz = gas_vz[close]
 	
 	gas_vrad = radial_v(gas_x, gas_y, gas_z, gas_vx, gas_vy, gas_vz) #km/s
 	gas_r = distance(gas_x / h, gas_y / h, gas_z / h) #kpc
