@@ -70,7 +70,7 @@ for halo in halos:
 	star_factor = star_factor[not_wind]
 
 	#get rid of particles that are too distant in the z direction
-	close = star_z / h <= 20
+	close = star_z / h <= 20#) & (star_y / h < 1 - 17 * (star_x / h) / 14) #second part is used for disk splitting tests
 	star_x = star_x[close]
 	star_y = star_y[close]
 	star_z = star_z[close]
@@ -81,7 +81,6 @@ for halo in halos:
 	
 	star_vrad_all = radial_v(star_x, star_y, star_z, star_vx, star_vy, star_vz) #km/s
 	star_r_all = distance(star_x / h, star_y / h, star_z / h) #kpc
-	
 	
 	#only want particles/cells that correspond to a high HI gas fraction
 	neutral_gas = gas_fraction > 0.95 #what is the best limit?
@@ -94,7 +93,7 @@ for halo in halos:
 	gas_vz = gas_vz[neutral_gas]
 
 	#get rid of particles that are too distant in the z direction
-	close = gas_z / h <= 20
+	close = gas_z / h <= 20 #) & (gas_y / h < 1 - 17 * (gas_x / h) / 14) #second part is used for disk splitting tests
 	gas_x = gas_x[close]
 	gas_y = gas_y[close]
 	gas_z = gas_z[close]
@@ -256,19 +255,19 @@ for halo in halos:
 	star4_ad = star4_ad[~np.isnan(star4_ad)]
 	
 	#plots-- 1 spatial map and 1 plot of rotation curves and 1 histogram of AD
-	# single_plot()
-	# plt.scatter(r_bins[:-1], gas_avg_vrot[:-1], c = 'darkgrey', s=12, label='gas')
-	# plt.scatter(r_bins[:-1], star1_avg_vrot[:-1], c = 'b', alpha = 0.6, s=10, marker='^', label='Group 1')
-	# plt.scatter(r_bins[:-1], star2_avg_vrot[:-1], c = 'm', alpha = 0.6, s=10, marker='P', label='Group 2')
-	# plt.scatter(r_bins[:-1], star3_avg_vrot[:-1], c = 'green', alpha = 0.6, s=10, marker='s', label='Group 3')
-	# plt.scatter(r_bins[:-1], star4_avg_vrot[:-1], c = 'r', alpha = 0.6, s=14, marker='_', label='Group 4')
-	# plt.ylim(0,500)
-	# plt.xlim(0,20)
-	# plt.ylabel(r'$ \rm Rotation\ Velocity:\ \itv_{\rm rot}\ \rm(km\ s^{-1})$', fontsize=13)
-	# plt.xlabel(r'$\rm Radial\ Distance:\ \it r\ \rm (kpc)$', fontsize=13)
-	# plt.legend(loc=2, frameon=False)
-	# plt.savefig('/Volumes/FRIEND/analogs/plots/rcs/{}_rc.png'.format(int(halo)), bbox_inches='tight')
-	# plt.close()
+	single_plot()
+	plt.scatter(r_bins[:-1], gas_avg_vrot[:-1], c = 'darkgrey', s=12, label='gas')
+	plt.scatter(r_bins[:-1], star1_avg_vrot[:-1], c = 'b', alpha = 0.6, s=10, marker='^', label='Group 1')
+	plt.scatter(r_bins[:-1], star2_avg_vrot[:-1], c = 'm', alpha = 0.6, s=10, marker='P', label='Group 2')
+	plt.scatter(r_bins[:-1], star3_avg_vrot[:-1], c = 'green', alpha = 0.6, s=10, marker='s', label='Group 3')
+	plt.scatter(r_bins[:-1], star4_avg_vrot[:-1], c = 'r', alpha = 0.6, s=14, marker='_', label='Group 4')
+	plt.ylim(0,500)
+	plt.xlim(0,20)
+	plt.ylabel(r'$ \rm Rotation\ Velocity:\ \itv_{\rm rot}\ \rm(km\ s^{-1})$', fontsize=13)
+	plt.xlabel(r'$\rm Radial\ Distance:\ \it r\ \rm (kpc)$', fontsize=13)
+	plt.legend(loc=2, frameon=False)
+	plt.savefig('/Volumes/FRIEND/analogs/plots/rcs/{}_rc.png'.format(int(halo)), bbox_inches='tight')
+	plt.close()
 	
 	#========================================================
 	single_plot()
@@ -282,176 +281,176 @@ for halo in halos:
 	plt.savefig('/Volumes/FRIEND/analogs/plots/hists/{}_AD.png'.format(int(halo)), bbox_inches='tight')
 	
 	#======================================================
-	# rc('font', family = 'serif')
-	# f, axes= plt.subplots(3,4, sharey=True, sharex=False, figsize=(14,10.4))
+	rc('font', family = 'serif')
+	f, axes= plt.subplots(3,4, sharey=True, sharex=False, figsize=(14,10.4))
 	
-	# centerx= 13
-	# centery= -12
-	# radius1= 200 / 60 / 60 * 13.86 #fix scaling factor
-	# radius2= 275 / 60 / 60 * 13.86 #fix scaling factor
-	# c = plt.Circle((centerx, centery), radius2, color='k', fill=False)
-	# c1 = plt.Circle((centerx, centery), radius1, color='k', fill=False)
-	# c2 = plt.Circle((centerx, centery), radius2, color='k', fill=False)
-	# c3 = plt.Circle((centerx, centery), radius1, color='k', fill=False)
-	# c4 = plt.Circle((centerx, centery), radius1, color='k', fill=False)
-	# c5 = plt.Circle((centerx, centery), radius1, color='k', fill=False)
-	# c6 = plt.Circle((centerx, centery), radius2, color='k', fill=False)
-	# c7 = plt.Circle((centerx, centery), radius2, color='k', fill=False)
+	centerx= 13
+	centery= -12
+	radius1= 200 / 60 / 60 * 13.86 #fix scaling factor
+	radius2= 275 / 60 / 60 * 13.86 #fix scaling factor
+	c = plt.Circle((centerx, centery), radius2, color='k', fill=False)
+	c1 = plt.Circle((centerx, centery), radius1, color='k', fill=False)
+	c2 = plt.Circle((centerx, centery), radius2, color='k', fill=False)
+	c3 = plt.Circle((centerx, centery), radius1, color='k', fill=False)
+	c4 = plt.Circle((centerx, centery), radius1, color='k', fill=False)
+	c5 = plt.Circle((centerx, centery), radius1, color='k', fill=False)
+	c6 = plt.Circle((centerx, centery), radius2, color='k', fill=False)
+	c7 = plt.Circle((centerx, centery), radius2, color='k', fill=False)
 	
-	# axes[0,0].scatter(star_x[group1] / h, star_y[group1] / h, c=star_vrad_all[group1], cmap='plasma', s=4, vmin=-150,vmax=100) 
-	# axes[0,1].scatter(star_x[group2] / h, star_y[group2] / h, c=star_vrad_all[group2], cmap='plasma', s=4, vmin=-150,vmax=100) 
-	# axes[0,2].scatter(star_x[group3] / h, star_y[group3] / h, c=star_vrad_all[group3], cmap='plasma', s=4, vmin=-150,vmax=100) 
-	# im0=axes[0,3].scatter(star_x[group4] / h, star_y[group4] / h, c=star_vrad_all[group4], cmap='plasma', s=4, vmin=-150,vmax=100)
+	axes[0,0].scatter(star_x[group1] / h, star_y[group1] / h, c=star_vrad_all[group1], cmap='plasma', s=4, vmin=-150,vmax=100) 
+	axes[0,1].scatter(star_x[group2] / h, star_y[group2] / h, c=star_vrad_all[group2], cmap='plasma', s=4, vmin=-150,vmax=100) 
+	axes[0,2].scatter(star_x[group3] / h, star_y[group3] / h, c=star_vrad_all[group3], cmap='plasma', s=4, vmin=-150,vmax=100) 
+	im0=axes[0,3].scatter(star_x[group4] / h, star_y[group4] / h, c=star_vrad_all[group4], cmap='plasma', s=4, vmin=-150,vmax=100)
 	
-	# axes[0,0].annotate('Group 1', xy=(-.55,13.5), horizontalalignment='right', fontsize=12)
-	# axes[0,1].annotate('Group 2', xy=(-.550,13.5), horizontalalignment='right', fontsize=12)
-	# axes[0,2].annotate('Group 3', xy=(-.550,13.5), horizontalalignment='right', fontsize=12)
-	# axes[0,3].annotate('Group 4', xy=(-.550,13.5), horizontalalignment='right', fontsize=12)
+	axes[0,0].annotate('Group 1', xy=(-.55,13.5), horizontalalignment='right', fontsize=12)
+	axes[0,1].annotate('Group 2', xy=(-.550,13.5), horizontalalignment='right', fontsize=12)
+	axes[0,2].annotate('Group 3', xy=(-.550,13.5), horizontalalignment='right', fontsize=12)
+	axes[0,3].annotate('Group 4', xy=(-.550,13.5), horizontalalignment='right', fontsize=12)
 	
-	# axes[1,0].add_artist(c)
-	# axes[1,0].scatter(star1x / h, star1y / h, c= star1_vrad_smoothed, cmap='plasma', s=4, vmin=-150,vmax=100) 
-	# axes[1,1].scatter(star2x / h, star2y / h, c= star2_vrad_smoothed, cmap='plasma', s=4, vmin=-150,vmax=100)
-	# axes[1,1].add_artist(c4)
-	# axes[1,2].scatter(star3x / h, star3y / h, c= star3_vrad_smoothed, cmap='plasma', s=4, vmin=-150,vmax=100) 
-	# axes[1,2].add_artist(c5)
-	# im1=axes[1,3].scatter(star4x / h, star4y / h, c= star4_vrad_smoothed, cmap='plasma', s=4, vmin=-150,vmax=100)
-	# axes[1,3].add_artist(c6)
+	axes[1,0].add_artist(c)
+	axes[1,0].scatter(star1x / h, star1y / h, c= star1_vrad_smoothed, cmap='plasma', s=4, vmin=-150,vmax=100) 
+	axes[1,1].scatter(star2x / h, star2y / h, c= star2_vrad_smoothed, cmap='plasma', s=4, vmin=-150,vmax=100)
+	axes[1,1].add_artist(c4)
+	axes[1,2].scatter(star3x / h, star3y / h, c= star3_vrad_smoothed, cmap='plasma', s=4, vmin=-150,vmax=100) 
+	axes[1,2].add_artist(c5)
+	im1=axes[1,3].scatter(star4x / h, star4y / h, c= star4_vrad_smoothed, cmap='plasma', s=4, vmin=-150,vmax=100)
+	axes[1,3].add_artist(c6)
 	
-	# axes[1,0].annotate('Group 1', xy=(-.550,13.5), horizontalalignment='right', fontsize=12)
-	# axes[1,1].annotate('Group 2', xy=(-.550,13.5), horizontalalignment='right', fontsize=12)
-	# axes[1,2].annotate('Group 3', xy=(-.550,13.5), horizontalalignment='right', fontsize=12)
-	# axes[1,3].annotate('Group 4', xy=(-.550,13.5), horizontalalignment='right', fontsize=12)
+	axes[1,0].annotate('Group 1', xy=(-.550,13.5), horizontalalignment='right', fontsize=12)
+	axes[1,1].annotate('Group 2', xy=(-.550,13.5), horizontalalignment='right', fontsize=12)
+	axes[1,2].annotate('Group 3', xy=(-.550,13.5), horizontalalignment='right', fontsize=12)
+	axes[1,3].annotate('Group 4', xy=(-.550,13.5), horizontalalignment='right', fontsize=12)
 	
-	# axes[2,0].scatter(star1x / h, star1y / h, c= star1_disp, cmap='copper', s=4, vmin=0,vmax=200) 
-	# axes[2,0].add_artist(c2)
-	# axes[2,1].scatter(star2x / h, star2y / h, c= star2_disp, cmap='copper', s=4, vmin=0,vmax=200)
-	# axes[2,1].add_artist(c1)
-	# axes[2,2].add_artist(c3)
-	# axes[2,2].scatter(star3x / h, star3y / h, c= star3_disp, cmap='copper', s=4,vmin=0,vmax=200) 
-	# axes[2,3].add_artist(c7)
-	# im2=axes[2,3].scatter(star4x / h, star4y / h, c= star4_disp, cmap='copper', s=4,vmin=0,vmax=200)
+	axes[2,0].scatter(star1x / h, star1y / h, c= star1_disp, cmap='copper', s=4, vmin=0,vmax=200) 
+	axes[2,0].add_artist(c2)
+	axes[2,1].scatter(star2x / h, star2y / h, c= star2_disp, cmap='copper', s=4, vmin=0,vmax=200)
+	axes[2,1].add_artist(c1)
+	axes[2,2].add_artist(c3)
+	axes[2,2].scatter(star3x / h, star3y / h, c= star3_disp, cmap='copper', s=4,vmin=0,vmax=200) 
+	axes[2,3].add_artist(c7)
+	im2=axes[2,3].scatter(star4x / h, star4y / h, c= star4_disp, cmap='copper', s=4,vmin=0,vmax=200)
 	
-	# axes[2,0].annotate('Group 1',xy=(-.550,13.5), horizontalalignment='right', fontsize=12)
-	# axes[2,1].annotate('Group 2', xy=(-.550,13.5), horizontalalignment='right', fontsize=12)
-	# axes[2,2].annotate('Group 3', xy=(-.550,13.5), horizontalalignment='right', fontsize=12)
-	# axes[2,3].annotate('Group 4', xy=(-.550,13.5), horizontalalignment='right', fontsize=12)
+	axes[2,0].annotate('Group 1',xy=(-.550,13.5), horizontalalignment='right', fontsize=12)
+	axes[2,1].annotate('Group 2', xy=(-.550,13.5), horizontalalignment='right', fontsize=12)
+	axes[2,2].annotate('Group 3', xy=(-.550,13.5), horizontalalignment='right', fontsize=12)
+	axes[2,3].annotate('Group 4', xy=(-.550,13.5), horizontalalignment='right', fontsize=12)
 	
-	# for ax in axes[0,:]:
-	# 	ax.set_xlim(18, -18)
-	# 	ax.set(adjustable='box-forced', aspect='equal')
-	# 	ax.tick_params(axis='x',which='both',bottom='on',top='off', direction='out')
-	# 	ax.tick_params(axis='x',which='both',top='on', direction='in')
-	# 	ax.tick_params(which='both', width=1)
-	# 	ax.tick_params(which='major', length=7)
-	# 	ax.tick_params(which='minor', length=4)
-	# 	ax.tick_params(labelsize=12) 
-	# 	ax.minorticks_on()
-	# 	for axis in ['top','bottom','left','right']:
-	# 	        ax.spines[axis].set_linewidth(1)
+	for ax in axes[0,:]:
+		ax.set_xlim(18, -18)
+		ax.set(adjustable='box-forced', aspect='equal')
+		ax.tick_params(axis='x',which='both',bottom='on',top='off', direction='out')
+		ax.tick_params(axis='x',which='both',top='on', direction='in')
+		ax.tick_params(which='both', width=1)
+		ax.tick_params(which='major', length=7)
+		ax.tick_params(which='minor', length=4)
+		ax.tick_params(labelsize=12) 
+		ax.minorticks_on()
+		for axis in ['top','bottom','left','right']:
+		        ax.spines[axis].set_linewidth(1)
 	
-	# for ax in axes[1,:]:
-	# 	ax.set_xlim(18, -18)
-	# 	ax.set(adjustable='box-forced', aspect='equal')
-	# 	ax.tick_params(axis='x',which='both',bottom='on',top='off', direction='out')
-	# 	ax.tick_params(axis='x',which='both',top='on', direction='in')
-	# 	ax.tick_params(which='both', width=1)
-	# 	ax.tick_params(which='major', length=7)
-	# 	ax.tick_params(which='minor', length=4)
-	# 	ax.tick_params(labelsize=12) 
-	# 	ax.minorticks_on()
-	# 	for axis in ['top','bottom','left','right']:
-	# 	        ax.spines[axis].set_linewidth(1)
+	for ax in axes[1,:]:
+		ax.set_xlim(18, -18)
+		ax.set(adjustable='box-forced', aspect='equal')
+		ax.tick_params(axis='x',which='both',bottom='on',top='off', direction='out')
+		ax.tick_params(axis='x',which='both',top='on', direction='in')
+		ax.tick_params(which='both', width=1)
+		ax.tick_params(which='major', length=7)
+		ax.tick_params(which='minor', length=4)
+		ax.tick_params(labelsize=12) 
+		ax.minorticks_on()
+		for axis in ['top','bottom','left','right']:
+		        ax.spines[axis].set_linewidth(1)
 	
-	# for ax in axes[2,:]:
-	# 	ax.set_xlim(18, -18)
-	# 	ax.set(adjustable='box-forced', aspect='equal')
-	# 	ax.set_xlabel(r'$\xi\ (kpc)$', fontsize=13)
-	# 	ax.tick_params(axis='x',which='both',bottom='on',top='off', direction='out')
-	# 	ax.tick_params(axis='x',which='both',top='on', direction='in')
-	# 	ax.tick_params(which='both', width=1)
-	# 	ax.tick_params(which='major', length=7)
-	# 	ax.tick_params(which='minor', length=4)
-	# 	ax.tick_params(labelsize=12) 
-	# 	ax.minorticks_on()
-	# 	for axis in ['top','bottom','left','right']:
-	# 	        ax.spines[axis].set_linewidth(1)
+	for ax in axes[2,:]:
+		ax.set_xlim(18, -18)
+		ax.set(adjustable='box-forced', aspect='equal')
+		ax.set_xlabel(r'$\xi\ (kpc)$', fontsize=13)
+		ax.tick_params(axis='x',which='both',bottom='on',top='off', direction='out')
+		ax.tick_params(axis='x',which='both',top='on', direction='in')
+		ax.tick_params(which='both', width=1)
+		ax.tick_params(which='major', length=7)
+		ax.tick_params(which='minor', length=4)
+		ax.tick_params(labelsize=12) 
+		ax.minorticks_on()
+		for axis in ['top','bottom','left','right']:
+		        ax.spines[axis].set_linewidth(1)
 	
-	# for ax in axes[:,0]:
-	# 	ax.set_ylabel(r'$\eta\ (kpc)$', fontsize=13)
-	# 	ax.set_ylim(-18,18)
-	# 	ax.set(adjustable='box-forced', aspect='equal')
-	# 	ax.tick_params(axis='y',which='both',left='on',top='off', direction='out')
-	# 	ax.tick_params(axis='y',which='both',right='on', direction='in')
-	# 	ax.tick_params(which='both', width=1)
-	# 	ax.tick_params(which='major', length=7)
-	# 	ax.tick_params(which='minor', length=4)
-	# 	ax.tick_params(labelsize=12) 
-	# 	nbins = 7
-	# 	ax.yaxis.set_major_locator(MaxNLocator(nbins=nbins, prune='upper'))
-	# 	ax.minorticks_on()
-	# 	for axis in ['top','bottom','left','right']:
-	# 	        ax.spines[axis].set_linewidth(1)
+	for ax in axes[:,0]:
+		ax.set_ylabel(r'$\eta\ (kpc)$', fontsize=13)
+		ax.set_ylim(-18,18)
+		ax.set(adjustable='box-forced', aspect='equal')
+		ax.tick_params(axis='y',which='both',left='on',top='off', direction='out')
+		ax.tick_params(axis='y',which='both',right='on', direction='in')
+		ax.tick_params(which='both', width=1)
+		ax.tick_params(which='major', length=7)
+		ax.tick_params(which='minor', length=4)
+		ax.tick_params(labelsize=12) 
+		nbins = 7
+		ax.yaxis.set_major_locator(MaxNLocator(nbins=nbins, prune='upper'))
+		ax.minorticks_on()
+		for axis in ['top','bottom','left','right']:
+		        ax.spines[axis].set_linewidth(1)
 	
-	# for ax in axes[:,1]:
-	# 	ax.set_ylim(-18,18)
-	# 	ax.set(adjustable='box-forced', aspect='equal')
-	# 	ax.tick_params(axis='y',which='both',left='on',top='off', direction='out')
-	# 	ax.tick_params(axis='y',which='both',right='on', direction='in')
-	# 	ax.tick_params(which='both', width=1)
-	# 	ax.tick_params(which='major', length=7)
-	# 	ax.tick_params(which='minor', length=4)
-	# 	ax.tick_params(labelsize=12) 
-	# 	ax.minorticks_on()
-	# 	for axis in ['top','bottom','left','right']:
-	# 	        ax.spines[axis].set_linewidth(1)
+	for ax in axes[:,1]:
+		ax.set_ylim(-18,18)
+		ax.set(adjustable='box-forced', aspect='equal')
+		ax.tick_params(axis='y',which='both',left='on',top='off', direction='out')
+		ax.tick_params(axis='y',which='both',right='on', direction='in')
+		ax.tick_params(which='both', width=1)
+		ax.tick_params(which='major', length=7)
+		ax.tick_params(which='minor', length=4)
+		ax.tick_params(labelsize=12) 
+		ax.minorticks_on()
+		for axis in ['top','bottom','left','right']:
+		        ax.spines[axis].set_linewidth(1)
 	
-	# for ax in axes[:,2]:
-	# 	ax.set_ylim(-18,18)
-	# 	ax.set(adjustable='box-forced', aspect='equal')
-	# 	ax.tick_params(axis='y',which='both',left='on',top='off', direction='out')
-	# 	ax.tick_params(axis='y',which='both',right='on', direction='in')
-	# 	ax.tick_params(which='both', width=1)
-	# 	ax.tick_params(which='major', length=7)
-	# 	ax.tick_params(which='minor', length=4)
-	# 	ax.tick_params(labelsize=12) 
-	# 	ax.minorticks_on()
-	# 	for axis in ['top','bottom','left','right']:
-	# 	        ax.spines[axis].set_linewidth(1)
+	for ax in axes[:,2]:
+		ax.set_ylim(-18,18)
+		ax.set(adjustable='box-forced', aspect='equal')
+		ax.tick_params(axis='y',which='both',left='on',top='off', direction='out')
+		ax.tick_params(axis='y',which='both',right='on', direction='in')
+		ax.tick_params(which='both', width=1)
+		ax.tick_params(which='major', length=7)
+		ax.tick_params(which='minor', length=4)
+		ax.tick_params(labelsize=12) 
+		ax.minorticks_on()
+		for axis in ['top','bottom','left','right']:
+		        ax.spines[axis].set_linewidth(1)
 	
-	# for ax in axes[:,3]:
-	# 	ax.set_ylim(-18,18)
-	# 	ax.set(adjustable='box-forced', aspect='equal')
-	# 	ax.tick_params(axis='y',which='both',left='on',top='off', direction='out')
-	# 	ax.tick_params(axis='y',which='both',right='on', direction='in')
-	# 	ax.tick_params(which='both', width=1)
-	# 	ax.tick_params(which='major', length=7)
-	# 	ax.tick_params(which='minor', length=4)
-	# 	ax.tick_params(labelsize=12) 
-	# 	ax.minorticks_on()
-	# 	for axis in ['top','bottom','left','right']:
-	# 	        ax.spines[axis].set_linewidth(1)
+	for ax in axes[:,3]:
+		ax.set_ylim(-18,18)
+		ax.set(adjustable='box-forced', aspect='equal')
+		ax.tick_params(axis='y',which='both',left='on',top='off', direction='out')
+		ax.tick_params(axis='y',which='both',right='on', direction='in')
+		ax.tick_params(which='both', width=1)
+		ax.tick_params(which='major', length=7)
+		ax.tick_params(which='minor', length=4)
+		ax.tick_params(labelsize=12) 
+		ax.minorticks_on()
+		for axis in ['top','bottom','left','right']:
+		        ax.spines[axis].set_linewidth(1)
 	
-	# f.subplots_adjust(right=0.885)
-	# cbar_ax1 = f.add_axes([0.89,0.375,0.015,0.512])
-	# cbar_ax2 = f.add_axes([0.89,0.1,0.015,0.27])
-	# clb1=f.colorbar(im1, cax=cbar_ax1)
-	# clb2=f.colorbar(im2, cax=cbar_ax2)
-	# clb1.set_label(r'$\rm Individual,\ Mean\ LOS\ velocity:\ v, \ \overline{v}\ (km\ s^{-1})$', fontsize=13)
-	# clb2.set_label(r'$\rm Velocity\ Dispersion: \sigma\ (km\ s^{-1})$', fontsize=13, labelpad=12)
-	# axes[0,0].scatter(0,0,marker='+', c='dodgerblue', linewidth=2)
-	# axes[0,1].scatter(0,0,marker='+', c='dodgerblue', linewidth=2)
-	# axes[0,2].scatter(0,0,marker='+', c='dodgerblue', linewidth=2)
-	# axes[0,3].scatter(0,0,marker='+', c='dodgerblue', linewidth=2)
-	# axes[1,0].scatter(0,0,marker='+', c='dodgerblue', linewidth=2)
-	# axes[1,1].scatter(0,0,marker='+', c='dodgerblue', linewidth=2)
-	# axes[1,2].scatter(0,0,marker='+', c='dodgerblue', linewidth=2)
-	# axes[1,3].scatter(0,0,marker='+', c='dodgerblue', linewidth=2)
-	# axes[2,0].scatter(0,0,marker='+', c='dodgerblue', linewidth=2)
-	# axes[2,1].scatter(0,0,marker='+', c='dodgerblue', linewidth=2)
-	# axes[2,2].scatter(0,0,marker='+', c='dodgerblue', linewidth=2)
-	# axes[2,3].scatter(0,0,marker='+', c='dodgerblue', linewidth=2)
-	# plt.subplots_adjust(wspace=0, hspace=0)
-	# plt.savefig('/Volumes/FRIEND/analogs/plots/maps/{}_map.png'.format(int(halo)), bbox_inches='tight')
+	f.subplots_adjust(right=0.885)
+	cbar_ax1 = f.add_axes([0.89,0.375,0.015,0.512])
+	cbar_ax2 = f.add_axes([0.89,0.1,0.015,0.27])
+	clb1=f.colorbar(im1, cax=cbar_ax1)
+	clb2=f.colorbar(im2, cax=cbar_ax2)
+	clb1.set_label(r'$\rm Individual,\ Mean\ LOS\ velocity:\ v, \ \overline{v}\ (km\ s^{-1})$', fontsize=13)
+	clb2.set_label(r'$\rm Velocity\ Dispersion: \sigma\ (km\ s^{-1})$', fontsize=13, labelpad=12)
+	axes[0,0].scatter(0,0,marker='+', c='dodgerblue', linewidth=2)
+	axes[0,1].scatter(0,0,marker='+', c='dodgerblue', linewidth=2)
+	axes[0,2].scatter(0,0,marker='+', c='dodgerblue', linewidth=2)
+	axes[0,3].scatter(0,0,marker='+', c='dodgerblue', linewidth=2)
+	axes[1,0].scatter(0,0,marker='+', c='dodgerblue', linewidth=2)
+	axes[1,1].scatter(0,0,marker='+', c='dodgerblue', linewidth=2)
+	axes[1,2].scatter(0,0,marker='+', c='dodgerblue', linewidth=2)
+	axes[1,3].scatter(0,0,marker='+', c='dodgerblue', linewidth=2)
+	axes[2,0].scatter(0,0,marker='+', c='dodgerblue', linewidth=2)
+	axes[2,1].scatter(0,0,marker='+', c='dodgerblue', linewidth=2)
+	axes[2,2].scatter(0,0,marker='+', c='dodgerblue', linewidth=2)
+	axes[2,3].scatter(0,0,marker='+', c='dodgerblue', linewidth=2)
+	plt.subplots_adjust(wspace=0, hspace=0)
+	plt.savefig('/Volumes/FRIEND/analogs/plots/maps/{}_map.png'.format(int(halo)), bbox_inches='tight')
 
 	#========================================================================================
 	#to examine the gas on nan ad analogs
@@ -463,12 +462,12 @@ for halo in halos:
 	# plt.ylim(-20, 20)
 	# plt.xlabel('kpc')
 	# plt.ylabel('kpc')
-	# plt.savefig('/Volumes/FRIEND/analogs/plots/gas/{}_gas_map.png'.format(int(halo)), bbox_inches='tight')
+	# plt.savefig('/Volumes/FRIEND/analogs/plots/disk_splitting/{}_gas_map.png'.format(int(halo)), bbox_inches='tight')
 	# plt.close()
 	
 	# single_plot()
 	# plt.hist(gas_fraction)
-	# plt.savefig('/Volumes/FRIEND/analogs/plots/gas/{}_gas_hist.png'.format(int(halo)), bbox_inches='tight')
+	# plt.savefig('/Volumes/FRIEND/analogs/plots/disk_splitting/{}_gas_hist.png'.format(int(halo)), bbox_inches='tight')
 	# plt.close()
 	#======================================================================================
 
