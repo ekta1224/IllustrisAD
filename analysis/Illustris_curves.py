@@ -34,6 +34,7 @@ halos = np.loadtxt('../data/M31analog_IDs_IllustrisAD.txt')
 
 
 for halo in halos:
+	print(halo)
 	#load in the positions, velocities, and masses of the stars and gas; the HI fraction, and the age of stars
 	star_x, star_y, star_z, star_vx, star_vy, star_vz, star_mass_all, star_factor = np.loadtxt('../data/M31analog_{}_star_properties_rotated.txt'.format(int(halo)), usecols=(0, 1, 2, 3, 4, 5, 6, 7,), unpack = True) 
 	gas_x, gas_y, gas_z, gas_vx, gas_vy, gas_vz, gas_mass_all, gas_fraction = np.loadtxt('../data/M31analog_{}_gas_properties_rotated.txt'.format(int(halo)), usecols=(0, 1, 2, 3, 4, 5, 6, 7,), unpack = True)
@@ -71,16 +72,16 @@ for halo in halos:
 
 	#get rid of particles that are too distant in the z direction
 	close = star_z / h <= 20#) & (star_y / h < 1 - 17 * (star_x / h) / 14) #second part is used for disk splitting tests
-	star_x = star_x[close]
-	star_y = star_y[close]
+	star_x_face = star_x[close]
+	star_y_face = star_y[close]
 	star_z = star_z[close]
 	star_vx = star_vx[close]
 	star_vy = star_vy[close]
 	star_vz = star_vz[close]
 	star_factor = star_factor[close]
 	
-	star_vrad_all = radial_v(star_x, star_y, star_z, star_vx, star_vy, star_vz) #km/s
-	star_r_all = distance(star_x / h, star_y / h, star_z / h) #kpc
+	star_vrad_all = radial_v(star_x_face, star_y_face, star_z, star_vx, star_vy, star_vz) #km/s
+	star_r_all = distance(star_x_face / h, star_y_face / h, star_z / h) #kpc
 	
 	#only want particles/cells that correspond to a high HI gas fraction
 	neutral_gas = gas_fraction > 0.95 #what is the best limit?
@@ -94,26 +95,56 @@ for halo in halos:
 
 	#get rid of particles that are too distant in the z direction
 	close = gas_z / h <= 20 #) & (gas_y / h < 1 - 17 * (gas_x / h) / 14) #second part is used for disk splitting tests
-	gas_x = gas_x[close]
-	gas_y = gas_y[close]
+	gas_x_face = gas_x[close]
+	gas_y_face = gas_y[close]
 	gas_z = gas_z[close]
 	gas_vx = gas_vx[close]
 	gas_vy = gas_vy[close]
 	gas_vz = gas_vz[close]
 	
-	gas_vrad = radial_v(gas_x, gas_y, gas_z, gas_vx, gas_vy, gas_vz) #km/s
-	gas_r = distance(gas_x / h, gas_y / h, gas_z / h) #kpc
+	gas_vrad = radial_v(gas_x_face, gas_y_face, gas_z, gas_vx, gas_vy, gas_vz) #km/s
+	gas_r = distance(gas_x_face / h, gas_y_face / h, gas_z / h) #kpc
+
+	#shift coordinates to M31's PA and inclination =========================================================================================
+	def rotate(pos, vel): #pos and vel 1x3 arrays
+		i = 77 * np.pi / 180 #rad
+		PA = (37 - 90) * np.pi / 180 #rad
 	
-	#smoothing ===============================================================
+		#inclination rotation first -- about the y axis
+		rot_y = np.array([[np.cos(i), 0, np.sin(i)], [0, 1, 0], [-np.sin(i), 0, np.cos(i)]])
 	
+		pos_inter = np.dot(rot_y, pos.T)
+		vel_inter = np.dot(rot_y, vel.T)
+	
+		#PA rotatation -- about the z axis
+		rot_z = np.array([[np.cos(PA), -np.sin(PA), 0], [np.sin(PA), np.cos(PA), 0], [0, 0, 1]])
+	
+		pos_shifted = np.dot(rot_z, pos_inter).T
+		vel_shifted = np.dot(rot_z, vel_inter).T
+	
+		return pos_shifted[:,0], pos_shifted[:,1], pos_shifted[:,2], vel_shifted[:,0], vel_shifted[:,1], vel_shifted[:,2]
+
+	star_pos = np.column_stack((star_x_face, star_y_face, star_z))
+	star_vel = np.column_stack((star_vx, star_vy, star_vz))
+	gas_pos = np.column_stack((gas_x_face, gas_y_face, gas_z))
+	gas_vel = np.column_stack((gas_vx, gas_vy, gas_vz))
+
+	#these shifted coordinates will be used from now on
+	star_x, star_y, star_z, star_vx, star_vy, star_vz = rotate(star_pos, star_vel)
+	gas_x, gas_y, gas_z, gas_vx, gas_vy, gas_vz = rotate(gas_pos, gas_vel)
+
+	#smoothing =============================================================================================================================
 	def smoothing(group, circle_size): #do not smooth the gas
 		#get data for the correct age group
 		star_xs = star_x[group]
 		star_ys = star_y[group]
+		star_xs_face = star_x_face[group] #will use for calculation of the poistion angle
+		star_ys_face = star_y_face[group]
 		star_zs = star_z[group]
 		star_vxs = star_vx[group]
 		star_vys = star_vy[group]
 		star_vzs = star_vz[group]
+		star_orginialr = star_r_all[group] #use the original distance so that don't need to deproject the shifted coordinates
 	
 		star_smoothed_vx = []
 		star_smoothed_vy = []
@@ -122,6 +153,9 @@ for halo in halos:
 		star_goodcenter_y = []
 		star_goodcenter_z = []
 		star_dispersion = []
+		star_r_deprojected = []
+		star_x_faceon = []
+		star_y_faceon = []
 		c = SkyCoord(ra = star_xs / 13.86 / h, dec = star_ys / 13.86 / h, unit=(u.deg,u.deg))
 		for i in range(len(star_xs)):
 			c1 = SkyCoord(star_xs[i] / 13.86 / h, star_ys[i] / 13.86 / h, unit=(u.deg,u.deg)) 
@@ -139,10 +173,13 @@ for halo in halos:
 				star_smoothed_vy.append(np.median(star_y_velocities)) #km/s
 				star_smoothed_vz.append(np.median(star_z_velocities)) #km/s
 				star_dispersion.append(np.std(radial_vels))
+				star_r_deprojected.append(star_orginialr[i])
+				star_x_faceon.append(star_xs_face[i])
+				star_y_faceon.append(star_ys_face[i])
 	
-		return np.array((star_smoothed_vx)), np.array((star_smoothed_vy)), np.array((star_smoothed_vz)), np.array((star_goodcenter_x)), np.array((star_goodcenter_y)), np.array((star_goodcenter_z)), np.array((star_dispersion))
+		return np.array((star_smoothed_vx)), np.array((star_smoothed_vy)), np.array((star_smoothed_vz)), np.array((star_goodcenter_x)), np.array((star_goodcenter_y)), np.array((star_goodcenter_z)), np.array((star_dispersion)), np.array((star_r_deprojected)), np.array((star_x_faceon)), np.array((star_y_faceon))
 	
-	#=========================================================================
+	#=======================================================================================================================================
 	
 	#calculate the rotation speed, assuming it's the same as tangential once averaged over the radial bin
 	def vrot(x, y, z, vx, vy, vz):
@@ -155,9 +192,25 @@ for halo in halos:
 	keep if not smoothing
 	star_vrot = vrot(star_x, star_y, star_z, star_vx, star_vy, star_vz)
 	'''
+
+	star_LOS = radial_v(star_x, star_y, star_z, star_vx, star_vy, star_vz)
+	vsys = np.mean(star_LOS)
+	#infinite disk model
+	def Vrot_thin_disk(xface, yface, x, y, z, vx, vy, vz): 
+		i = 77 * np.pi / 180 #rad
+		PA = 37 * np.pi / 180 #rad
+
+		v_LOS = radial_v(x, y, z, vx, vy, vz)
+		#vsys= np.mean(v_LOS) #using the average LOS velocity as a proxy for systematic velocity
+		PA_particle = np.arctan2(yface, xface) - 90 #radians (0 is at north and goes counter clockwise)
+
+		v_rot = (v_LOS - vsys) / np.sin(i) * np.sqrt(1 + (np.tan(PA_particle - PA)**2) / np.cos(i)**2)
+
+		return abs(v_rot)
 	
 	gas_vrot = vrot(gas_x, gas_y, gas_z, gas_vx, gas_vy, gas_vz)
-	
+	gas_vrot_model = Vrot_thin_disk(gas_x_face, gas_y_face, gas_x, gas_y, gas_z, gas_vx, gas_vy, gas_vz)
+
 	#calculate the ages of stars from the scale factor
 	def star_age(scale_factor):
 		zform = [(1./a) -1. for a in scale_factor]
@@ -190,27 +243,31 @@ for halo in halos:
 	'''
 	
 	#get smoothed data
-	star1vx, star1vy, star1vz, star1x, star1y, star1z, star1_disp = smoothing(group1, 275)
-	star2vx, star2vy, star2vz, star2x, star2y, star2z, star2_disp = smoothing(group2, 200)
-	star3vx, star3vy, star3vz, star3x, star3y, star3z, star3_disp = smoothing(group3, 200)
-	star4vx, star4vy, star4vz, star4x, star4y, star4z, star4_disp = smoothing(group4, 275)
+	star1vx, star1vy, star1vz, star1x, star1y, star1z, star1_disp, star1_r, star1_x_faceon, star1_y_faceon = smoothing(group1, 275)
+	star2vx, star2vy, star2vz, star2x, star2y, star2z, star2_disp, star2_r, star2_x_faceon, star2_y_faceon = smoothing(group2, 200)
+	star3vx, star3vy, star3vz, star3x, star3y, star3z, star3_disp, star3_r, star3_x_faceon, star3_y_faceon = smoothing(group3, 200)
+	star4vx, star4vy, star4vz, star4x, star4y, star4z, star4_disp, star4_r, star4_x_faceon, star4_y_faceon = smoothing(group4, 275)
 	
 	#smoothed
-	star1_r = distance(star1x / h, star1y / h, star1z / h)
+	#star1_r = distance(star1x / h, star1y / h, star1z / h)
 	star1_vrad_smoothed = radial_v(star1x, star1y, star1z, star1vx, star1vy, star1vz)
 	star1_vrot = vrot(star1x, star1y, star1z, star1vx, star1vy, star1vz)
+	star1_vrot_model = Vrot_thin_disk(star1_x_faceon, star1_y_faceon, star1x, star1y, star1z, star1vx, star1vy, star1vz)
 	
-	star2_r = distance(star2x / h, star2y / h, star2z / h)
+	#star2_r = distance(star2x / h, star2y / h, star2z / h)
 	star2_vrad_smoothed = radial_v(star2x, star2y, star2z, star2vx, star2vy, star2vz)
 	star2_vrot = vrot(star2x, star2y, star2z, star2vx, star2vy, star2vz)
+	star2_vrot_model = Vrot_thin_disk(star2_x_faceon, star2_y_faceon, star2x, star2y, star2z, star2vx, star2vy, star2vz)
 	
-	star3_r = distance(star3x / h, star3y / h, star3z / h)
+	#star3_r = distance(star3x / h, star3y / h, star3z / h)
 	star3_vrad_smoothed = radial_v(star3x, star3y, star3z, star3vx, star3vy, star3vz)
 	star3_vrot = vrot(star3x, star3y, star3z, star3vx, star3vy, star3vz)
+	star3_vrot_model = Vrot_thin_disk(star3_x_faceon, star3_y_faceon, star3x, star3y, star3z, star3vx, star3vy, star3vz)
 	
-	star4_r = distance(star4x / h, star4y / h, star4z / h)
+	#star4_r = distance(star4x / h, star4y / h, star4z / h)
 	star4_vrad_smoothed = radial_v(star4x, star4y, star4z, star4vx, star4vy, star4vz)
 	star4_vrot = vrot(star4x, star4y, star4z, star4vx, star4vy, star4vz)
+	star4_vrot_model = Vrot_thin_disk(star4_x_faceon, star4_y_faceon, star4x, star4y, star4z, star4vx, star4vy, star4vz)
 	
 	#divide stars and gas into radial and average the rotation velocities within each bin 
 	R_min = 0 #kpc
@@ -238,6 +295,26 @@ for halo in halos:
 		star4_avg_vrot[i]=np.median(star4_vrots)
 		gas_vrots=[b for b, a in zip(gas_vrot, gas_r) if a>=r_bins[i] and a<r_bins[i+1]]
 		gas_avg_vrot[i]=np.median(gas_vrots)
+
+	#trying out the new vrot model
+	star1_avg_vrot_model = np.zeros(len(r_bins))
+	star2_avg_vrot_model = np.zeros(len(r_bins))
+	star3_avg_vrot_model = np.zeros(len(r_bins))
+	star4_avg_vrot_model = np.zeros(len(r_bins))
+	gas_avg_vrot_model = np.zeros(len(r_bins))
+	
+	#dividing each age groups into radial bin
+	for i in range(len(r_bins)-1):
+		star1_vrot_models=[b for b, a in zip(star1_vrot_model, star1_r) if a>=r_bins[i] and a<r_bins[i+1]]
+		star1_avg_vrot_model[i]=np.median(star1_vrot_models)
+		star2_vrot_models=[b for b, a in zip(star2_vrot_model, star2_r) if a>=r_bins[i] and a<r_bins[i+1]]
+		star2_avg_vrot_model[i]=np.median(star2_vrot_models)
+		star3_vrot_models=[b for b, a in zip(star3_vrot_model, star3_r) if a>=r_bins[i] and a<r_bins[i+1]]
+		star3_avg_vrot_model[i]=np.median(star3_vrot_models)
+		star4_vrot_models=[b for b, a in zip(star4_vrot_model, star4_r) if a>=r_bins[i] and a<r_bins[i+1]]
+		star4_avg_vrot_model[i]=np.median(star4_vrot_models)
+		gas_vrot_models=[b for b, a in zip(gas_vrot_model, gas_r) if a>=r_bins[i] and a<r_bins[i+1]]
+		gas_avg_vrot_model[i]=np.median(gas_vrot_models)
 	
 	#calculate the asymmetric drift
 	def va(v_gas, v_star):
@@ -254,6 +331,18 @@ for halo in halos:
 	star3_ad = star3_ad[~np.isnan(star3_ad)]
 	star4_ad = star4_ad[~np.isnan(star4_ad)]
 	
+	#trying out new vrot model
+	star1_ad_model = va(gas_avg_vrot_model, star1_avg_vrot_model)
+	star2_ad_model = va(gas_avg_vrot_model, star2_avg_vrot_model)
+	star3_ad_model = va(gas_avg_vrot_model, star3_avg_vrot_model)
+	star4_ad_model = va(gas_avg_vrot_model, star4_avg_vrot_model)
+	
+	#remove nan values (that resulted from having empty radial bins)
+	star1_ad_model = star1_ad_model[~np.isnan(star1_ad_model)]
+	star2_ad_model = star2_ad_model[~np.isnan(star2_ad_model)]
+	star3_ad_model = star3_ad_model[~np.isnan(star3_ad_model)]
+	star4_ad_model = star4_ad_model[~np.isnan(star4_ad_model)]
+
 	#plots-- 1 spatial map and 1 plot of rotation curves and 1 histogram of AD
 	single_plot()
 	plt.scatter(r_bins[:-1], gas_avg_vrot[:-1], c = 'darkgrey', s=12, label='gas')
@@ -268,8 +357,22 @@ for halo in halos:
 	plt.legend(loc=2, frameon=False)
 	plt.savefig('/Volumes/FRIEND/analogs/plots/rcs/{}_rc.png'.format(int(halo)), bbox_inches='tight')
 	plt.close()
+
+	single_plot()
+	plt.scatter(r_bins[:-1], gas_avg_vrot_model[:-1], c = 'darkgrey', s=12, label='gas')
+	plt.scatter(r_bins[:-1], star1_avg_vrot_model[:-1], c = 'b', alpha = 0.6, s=10, marker='^', label='Group 1')
+	plt.scatter(r_bins[:-1], star2_avg_vrot_model[:-1], c = 'm', alpha = 0.6, s=10, marker='P', label='Group 2')
+	plt.scatter(r_bins[:-1], star3_avg_vrot_model[:-1], c = 'green', alpha = 0.6, s=10, marker='s', label='Group 3')
+	plt.scatter(r_bins[:-1], star4_avg_vrot_model[:-1], c = 'r', alpha = 0.6, s=14, marker='_', label='Group 4')
+	plt.ylim(0,500)
+	plt.xlim(0,20)
+	plt.ylabel(r'$ \rm Rotation\ Velocity:\ \itv_{\rm rot}\ \rm(km\ s^{-1})$', fontsize=13)
+	plt.xlabel(r'$\rm Radial\ Distance:\ \it r\ \rm (kpc)$', fontsize=13)
+	plt.legend(loc=2, frameon=False)
+	plt.savefig('/Volumes/FRIEND/analogs/plots/rcs/{}_rc_model.png'.format(int(halo)), bbox_inches='tight')
+	plt.close()
 	
-	#========================================================
+	#======================================================================================================================
 	single_plot()
 	plt.hist(star1_ad[:-1], bins=range(-200, 300, 20), label='Group 1: {} stars, AD ={}'.format(sum(group1), np.median(star1_ad[:-1])), normed=1, histtype='step', linewidth=1.6,linestyle='--',stacked=True,fill=False, color='b')
 	plt.hist(star2_ad[:-1], bins=range(-200, 300, 20), label='Group 2: {} stars, AD ={}'.format(sum(group2), np.median(star2_ad[:-1])), normed=1, histtype='step', linewidth=1.6,stacked=True,fill=False, color='m', hatch='//', alpha=0.4)
@@ -279,8 +382,18 @@ for halo in halos:
 	plt.xlim(-300,300)
 	plt.xlabel(r'$ \rm Asymmetric\ Drift:\ \itv_{a}\ \rm(km\ s^{-1})$', fontsize=13)
 	plt.savefig('/Volumes/FRIEND/analogs/plots/hists/{}_AD.png'.format(int(halo)), bbox_inches='tight')
+
+	single_plot()
+	plt.hist(star1_ad_model[:-1], bins=range(-200, 300, 20), label='Group 1: {} stars, AD ={}'.format(sum(group1), np.median(star1_ad_model[:-1])), normed=1, histtype='step', linewidth=1.6,linestyle='--',stacked=True,fill=False, color='b')
+	plt.hist(star2_ad_model[:-1], bins=range(-200, 300, 20), label='Group 2: {} stars, AD ={}'.format(sum(group2), np.median(star2_ad_model[:-1])), normed=1, histtype='step', linewidth=1.6,stacked=True,fill=False, color='m', hatch='//', alpha=0.4)
+	plt.hist(star3_ad_model[:-1], bins=range(-200, 300, 20), label='Group 3: {} stars, AD ={}'.format(sum(group3), np.median(star3_ad_model[:-1])), normed=1, histtype='step', linewidth=1.6,stacked=True,fill=True, color='green', alpha=0.4)
+	plt.hist(star4_ad_model[:-1], bins=range(-200, 300, 20), label='Group 4: {} stars, AD ={}'.format(sum(group4), np.median(star4_ad_model[:-1])), normed=1, histtype='step', linewidth=1.6,linestyle='-',stacked=True,fill=False, color='r')
+	plt.legend(loc=2, frameon=False)
+	plt.xlim(-300,300)
+	plt.xlabel(r'$ \rm Asymmetric\ Drift:\ \itv_{a}\ \rm(km\ s^{-1})$', fontsize=13)
+	plt.savefig('/Volumes/FRIEND/analogs/plots/hists/{}_AD_model.png'.format(int(halo)), bbox_inches='tight')
 	
-	#======================================================
+	#====================================================================================================================
 	rc('font', family = 'serif')
 	f, axes= plt.subplots(3,4, sharey=True, sharex=False, figsize=(14,10.4))
 	
@@ -452,7 +565,7 @@ for halo in halos:
 	plt.subplots_adjust(wspace=0, hspace=0)
 	plt.savefig('/Volumes/FRIEND/analogs/plots/maps/{}_map.png'.format(int(halo)), bbox_inches='tight')
 
-	#========================================================================================
+	#======================================================================================================================================================
 	#to examine the gas on nan ad analogs
 	# single_plot()
 	# plt.scatter(gas_x / h, gas_y / h, c=gas_vrot, alpha = .5, s=6, vmin=100, vmax=350)
@@ -469,7 +582,7 @@ for halo in halos:
 	# plt.hist(gas_fraction)
 	# plt.savefig('/Volumes/FRIEND/analogs/plots/disk_splitting/{}_gas_hist.png'.format(int(halo)), bbox_inches='tight')
 	# plt.close()
-	#======================================================================================
+	#====================================================================================================================================================
 
 	#save data to file
 	#np.savetxt('/Volumes/FRIEND/analogs/data/{}_vrot.txt'.format(int(halo)), np.c_[r_bins[:-1], gas_avg_vrot[:-1], star1_avg_vrot[:-1], star2_avg_vrot[:-1], star3_avg_vrot[:-1], star4_avg_vrot[:-1]], fmt='%1.16f', delimiter=' ', header='r bin (kpc), avg v_rot gas (km/s), avg v_rot star 1 (km/s), avg v_rot star 2 (km/s), avg v_rot star 3 (km/s), avg v_rot star 4 (km/s)')
