@@ -23,29 +23,17 @@ r_bins = r_bins[:-1]
 num_mergers = 0
 num_no_mergers = 0
 
-#will contain the number of nan values in each radial bin -- will be used to alter the averaging later
-star1_num_nan_merger = np.zeros_like(r_bins)
-star1_num_nan_no_merger = np.zeros_like(r_bins)
-star2_num_nan_merger = np.zeros_like(r_bins)
-star2_num_nan_no_merger = np.zeros_like(r_bins)
-star3_num_nan_merger = np.zeros_like(r_bins)
-star3_num_nan_no_merger = np.zeros_like(r_bins)
-star4_num_nan_merger = np.zeros_like(r_bins)
-star4_num_nan_no_merger = np.zeros_like(r_bins)
-gas_num_nan_merger = np.zeros_like(r_bins)
-gas_num_nan_no_merger = np.zeros_like(r_bins)
-
-#will contain the summed vrots for each age bin and merger group
-star1_vrot_merger = np.zeros_like(r_bins)
-star1_vrot_no_merger = np.zeros_like(r_bins)
-star2_vrot_merger = np.zeros_like(r_bins)
-star2_vrot_no_merger = np.zeros_like(r_bins)
-star3_vrot_merger = np.zeros_like(r_bins)
-star3_vrot_no_merger = np.zeros_like(r_bins)
-star4_vrot_merger = np.zeros_like(r_bins)
-star4_vrot_no_merger = np.zeros_like(r_bins)
-gas_vrot_merger = np.zeros_like(r_bins)
-gas_vrot_no_merger = np.zeros_like(r_bins)
+#contains non nan data to be used for the average and the standard deviation
+star1_data_merger = [[] for i in range(len(r_bins))]
+star2_data_merger = [[] for i in range(len(r_bins))]
+star3_data_merger = [[] for i in range(len(r_bins))]
+star4_data_merger = [[] for i in range(len(r_bins))]
+gas_data_merger = [[] for i in range(len(r_bins))]
+star1_data_no_merger = [[] for i in range(len(r_bins))]
+star2_data_no_merger = [[] for i in range(len(r_bins))]
+star3_data_no_merger = [[] for i in range(len(r_bins))]
+star4_data_no_merger = [[] for i in range(len(r_bins))]
+gas_data_no_merger = [[] for i in range(len(r_bins))]
 for halo in halos:
 	#read in data
 	print(halo)
@@ -57,74 +45,79 @@ for halo in halos:
 
 	#divide into merger vs non merger groups
 	if merger_time < 5: #Gyr
-		#first populate num_nan so that the averaging is not affected by non entries
 		for i in range(len(star1_vrot)):
-			if np.isnan(star1_vrot[i]) == True:
-				star1_num_nan_merger[i] = star1_num_nan_merger[i] + 1
-			if np.isnan(star2_vrot[i]) == True:
-				star2_num_nan_merger[i] = star2_num_nan_merger[i] + 1
-			if np.isnan(star3_vrot[i]) == True:
-				star3_num_nan_merger[i] = star3_num_nan_merger[i] + 1
-			if np.isnan(star4_vrot[i]) == True:
-				star4_num_nan_merger[i] = star4_num_nan_merger[i] + 1
-			if np.isnan(gas_vrot[i]) == True:
-				gas_num_nan_merger[i] = gas_num_nan_merger[i] + 1
-
-		#convert nans to 0 so that array addition can happen
-		star1_vrot = np.nan_to_num(star1_vrot)
-		star2_vrot = np.nan_to_num(star2_vrot)
-		star3_vrot = np.nan_to_num(star3_vrot)
-		star4_vrot = np.nan_to_num(star4_vrot)
-		gas_vrot = np.nan_to_num(gas_vrot)
-
-		#add together all of the vrots per radial bin for all the halos
-		star1_vrot_merger = star1_vrot_merger + star1_vrot
-		star2_vrot_merger = star2_vrot_merger + star2_vrot
-		star3_vrot_merger = star3_vrot_merger + star3_vrot
-		star4_vrot_merger = star4_vrot_merger + star4_vrot
-		gas_vrot_merger = gas_vrot_merger + gas_vrot
+			if np.isnan(star1_vrot[i]) == False:
+				star1_data_merger[i].append(star1_vrot[i])
+			if np.isnan(star2_vrot[i]) == False:
+				star2_data_merger[i].append(star2_vrot[i])
+			if np.isnan(star3_vrot[i]) == False:
+				star3_data_merger[i].append(star3_vrot[i])
+			if np.isnan(star4_vrot[i]) == False:
+				star4_data_merger[i].append(star4_vrot[i])
+			if np.isnan(gas_vrot[i]) == False:
+				gas_data_merger[i].append(gas_vrot[i])
 		num_mergers = num_mergers + 1
 
 	else:
 		#count how many nans there are so that the non data elements are not incorrectly averaged
 		for i in range(len(star1_vrot)):
-			if np.isnan(star1_vrot[i]) == True:
-				star1_num_nan_no_merger[i] = star1_num_nan_no_merger[i] + 1
-			if np.isnan(star2_vrot[i]) == True:
-				star2_num_nan_no_merger[i] = star2_num_nan_no_merger[i] + 1
-			if np.isnan(star3_vrot[i]) == True:
-				star3_num_nan_no_merger[i] = star3_num_nan_no_merger[i] + 1
-			if np.isnan(star4_vrot[i]) == True:
-				star4_num_nan_no_merger[i] = star4_num_nan_no_merger[i] + 1
-			if np.isnan(gas_vrot[i]) == True:
-				gas_num_nan_no_merger[i] = gas_num_nan_no_merger[i] + 1
-
-		#convert nans to 0 so that array addition can happen
-		star1_vrot = np.nan_to_num(star1_vrot)
-		star2_vrot = np.nan_to_num(star2_vrot)
-		star3_vrot = np.nan_to_num(star3_vrot)
-		star4_vrot = np.nan_to_num(star4_vrot)
-		gas_vrot = np.nan_to_num(gas_vrot)
-
-		#add together all of the vrots per radial bin for all the halos
-		star1_vrot_no_merger = star1_vrot_no_merger + star1_vrot
-		star2_vrot_no_merger = star2_vrot_no_merger + star2_vrot
-		star3_vrot_no_merger = star3_vrot_no_merger + star3_vrot
-		star4_vrot_no_merger = star4_vrot_no_merger + star4_vrot
-		gas_vrot_no_merger = gas_vrot_no_merger + gas_vrot
+			if np.isnan(star1_vrot[i]) == False:
+				star1_data_no_merger[i].append(star1_vrot[i])
+			if np.isnan(star2_vrot[i]) == False:
+				star2_data_no_merger[i].append(star2_vrot[i])
+			if np.isnan(star3_vrot[i]) == False:
+				star3_data_no_merger[i].append(star3_vrot[i])
+			if np.isnan(star4_vrot[i]) == False:
+				star4_data_no_merger[i].append(star4_vrot[i])
+			if np.isnan(gas_vrot[i]) == False:
+				gas_data_no_merger[i].append(gas_vrot[i])
 		num_no_mergers = num_no_mergers + 1
 
-#dividing the sums by the number of mergers - the number of nans in a given radial bin; now we have average rotation velocities ========
-star1_vrot_merger = star1_vrot_merger / abs(star1_num_nan_merger - num_mergers)   
-star1_vrot_no_merger = star1_vrot_no_merger / abs(star1_num_nan_no_merger - num_no_mergers)
-star2_vrot_merger = star2_vrot_merger / abs(star2_num_nan_merger - num_mergers)     
-star2_vrot_no_merger = star2_vrot_no_merger / abs(star2_num_nan_no_merger - num_no_mergers)
-star3_vrot_merger = star3_vrot_merger / abs(star3_num_nan_merger - num_mergers)     
-star3_vrot_no_merger = star3_vrot_no_merger / abs(star3_num_nan_no_merger - num_no_mergers)
-star4_vrot_merger = star4_vrot_merger / abs(star4_num_nan_merger - num_mergers)     
-star4_vrot_no_merger = star4_vrot_no_merger / abs(star4_num_nan_no_merger - num_no_mergers)
-gas_vrot_merger = gas_vrot_merger / abs(gas_num_nan_merger - num_mergers)      
-gas_vrot_no_merger = gas_vrot_no_merger / abs(gas_num_nan_no_merger - num_no_mergers) 
+#averages
+star1_vrot_merger = np.zeros_like(r_bins)
+star2_vrot_merger = np.zeros_like(r_bins)
+star3_vrot_merger = np.zeros_like(r_bins)
+star4_vrot_merger = np.zeros_like(r_bins)
+gas_vrot_merger = np.zeros_like(r_bins)
+star1_vrot_no_merger = np.zeros_like(r_bins)
+star2_vrot_no_merger = np.zeros_like(r_bins)
+star3_vrot_no_merger = np.zeros_like(r_bins)
+star4_vrot_no_merger = np.zeros_like(r_bins)
+gas_vrot_no_merger = np.zeros_like(r_bins)
+
+star1_error_merger = np.zeros_like(r_bins)
+star2_error_merger = np.zeros_like(r_bins)
+star3_error_merger = np.zeros_like(r_bins)
+star4_error_merger = np.zeros_like(r_bins)
+gas_error_merger = np.zeros_like(r_bins)
+star1_error_no_merger = np.zeros_like(r_bins)
+star2_error_no_merger = np.zeros_like(r_bins)
+star3_error_no_merger = np.zeros_like(r_bins)
+star4_error_no_merger = np.zeros_like(r_bins)
+gas_error_no_merger = np.zeros_like(r_bins)
+#average and standard deviation
+for i in range(len(r_bins)):
+	star1_vrot_merger[i] = np.mean(star1_data_merger[i])
+	star2_vrot_merger[i] = np.mean(star2_data_merger[i])
+	star3_vrot_merger[i] = np.mean(star3_data_merger[i])
+	star4_vrot_merger[i] = np.mean(star4_data_merger[i])
+	gas_vrot_merger[i] = np.mean(gas_data_merger[i])
+	star1_vrot_no_merger[i] = np.mean(star1_data_no_merger[i])
+	star2_vrot_no_merger[i] = np.mean(star2_data_no_merger[i])
+	star3_vrot_no_merger[i] = np.mean(star3_data_no_merger[i])
+	star4_vrot_no_merger[i] = np.mean(star4_data_no_merger[i])
+	gas_vrot_no_merger[i] = np.mean(gas_data_no_merger[i])
+
+	star1_error_merger[i] = np.std(star1_data_merger[i])
+	star2_error_merger[i] = np.std(star2_data_merger[i])
+	star3_error_merger[i] = np.std(star3_data_merger[i])
+	star4_error_merger[i] = np.std(star4_data_merger[i])
+	gas_error_merger[i] = np.std(gas_data_merger[i])
+	star1_error_no_merger[i] = np.std(star1_data_no_merger[i])
+	star2_error_no_merger[i] = np.std(star2_data_no_merger[i])
+	star3_error_no_merger[i] = np.std(star3_data_no_merger[i])
+	star4_error_no_merger[i] = np.std(star4_data_no_merger[i])
+	gas_error_no_merger[i] = np.std(gas_data_no_merger[i])
 
 #calculate the asymmetric drift
 def va(v_gas, v_star):
@@ -150,22 +143,6 @@ star3_AD_no_merger = star3_AD_no_merger[~np.isnan(star3_AD_no_merger)]
 star4_AD_no_merger = star4_AD_no_merger[~np.isnan(star4_AD_no_merger)]
 
 #plots ====================================================================================================================================
-def single_plot():
-	rc('font', family = 'serif')
-	fig, ax=plt.subplots(1)
-	for axis in ['top','bottom','left','right']:
-	        ax.spines[axis].set_linewidth(2)
-	ax.tick_params(axis='x',which='both',bottom='on',top='off', direction='out')
-	ax.tick_params(axis='x',which='both',top='on', direction='in')
-	ax.tick_params(axis='y',which='both',left='on',top='off', direction='out')
-	ax.tick_params(axis='y',which='both',right='on', direction='in')
-	plt.tick_params(which='both', width=2)
-	plt.tick_params(which='major', length=7)
-	plt.tick_params(which='minor', length=4)
-	plt.tick_params(labelsize=12) 
-	plt.minorticks_on()
-	return
-
 #AD histograms
 f, axes= plt.subplots(1,2, sharey=True, sharex=False, figsize=(15,6))
 for ax in axes:
@@ -194,7 +171,9 @@ axes[1].hist(star4_AD_no_merger, bins=range(-200, 300, 20), label='Group 4: Medi
 axes[0].legend(loc=2, frameon=False)
 axes[1].legend(loc=2, frameon=False)
 axes[0].annotate('Recent 4:1 Merger', xy=(-270, 0.002), horizontalalignment='left', fontsize=12)
+axes[0].annotate('{} Halos'.format(num_mergers), xy=(-270, 0.0045), horizontalalignment='left', fontsize=12)
 axes[1].annotate('No Recent 4:1 Merger', xy=(-270, 0.002), horizontalalignment='left', fontsize=12)
+axes[1].annotate('{} Halos'.format(num_no_mergers), xy=(-270, 0.0045), horizontalalignment='left', fontsize=12)
 plt.subplots_adjust(wspace=.09, hspace=0)
 plt.savefig('/Volumes/FRIEND/analogs/plots/merger/AD.png', bbox_inches='tight')
 plt.close()
@@ -218,19 +197,21 @@ for ax in axes:
 axes[0].set_ylabel(r'$ \rm Rotation\ Velocity:\ \itv_{\rm rot}\ \rm(km\ s^{-1})$', fontsize=13)
 ax.set_ylim(0, 500)
 
-axes[0].scatter(r_bins, gas_vrot_merger, c = 'darkgrey', s=12, label='gas')
-axes[0].scatter(r_bins, star1_vrot_merger, c = 'b', alpha = 0.6, s=10, marker='^', label='Group 1')
-axes[0].scatter(r_bins, star2_vrot_merger, c = 'm', alpha = 0.6, s=10, marker='P', label='Group 2')
-axes[0].scatter(r_bins, star3_vrot_merger, c = 'green', alpha = 0.6, s=10, marker='s', label='Group 3')
-axes[0].scatter(r_bins, star4_vrot_merger, c = 'r', alpha = 0.6, s=14, marker='_', label='Group 4')
-axes[1].scatter(r_bins, gas_vrot_no_merger, c = 'darkgrey', s=12, label='gas')
-axes[1].scatter(r_bins, star1_vrot_no_merger, c = 'b', alpha = 0.6, s=10, marker='^', label='Group 1')
-axes[1].scatter(r_bins, star2_vrot_no_merger, c = 'm', alpha = 0.6, s=10, marker='P', label='Group 2')
-axes[1].scatter(r_bins, star3_vrot_no_merger, c = 'green', alpha = 0.6, s=10, marker='s', label='Group 3')
-axes[1].scatter(r_bins, star4_vrot_no_merger, c = 'r', alpha = 0.6, s=14, marker='_', label='Group 4')
+axes[0].errorbar(r_bins, gas_vrot_merger, yerr = gas_error_merger, errorevery=10, c = 'darkgrey', label='gas')
+axes[0].errorbar(r_bins, star1_vrot_merger, yerr = star1_error_merger, errorevery=10, c = 'b', alpha = 0.6, label='Group 1')
+axes[0].errorbar(r_bins, star2_vrot_merger, yerr = star2_error_merger, errorevery=10, c = 'm', alpha = 0.6, label='Group 2')
+axes[0].errorbar(r_bins, star3_vrot_merger, yerr = star3_error_merger, errorevery=10, c = 'green', alpha = 0.6, label='Group 3')
+axes[0].errorbar(r_bins, star4_vrot_merger, yerr = star4_error_merger, errorevery=10, c = 'r', alpha = 0.6, label='Group 4')
+axes[1].errorbar(r_bins, gas_vrot_no_merger, yerr = gas_error_no_merger, errorevery=10, c = 'darkgrey', label='gas')
+axes[1].errorbar(r_bins, star1_vrot_no_merger, yerr = star1_error_no_merger, errorevery=10, c = 'b', alpha = 0.6, label='Group 1')
+axes[1].errorbar(r_bins, star2_vrot_no_merger, yerr = star2_error_no_merger, errorevery=10, c = 'm', alpha = 0.6, label='Group 2')
+axes[1].errorbar(r_bins, star3_vrot_no_merger, yerr = star3_error_no_merger, errorevery=10, c = 'green', alpha = 0.6, label='Group 3')
+axes[1].errorbar(r_bins, star4_vrot_no_merger, yerr = star4_error_no_merger, errorevery=10, c = 'r', alpha = 0.6, label='Group 4')
 axes[0].legend(loc=2, frameon=False)
 axes[0].annotate('Recent 4:1 Merger', xy=(12.5, 460), horizontalalignment='left', fontsize=12)
 axes[1].annotate('No Recent 4:1 Merger', xy=(12.5, 460), horizontalalignment='left', fontsize=12)
+axes[0].annotate('{} Halos'.format(num_mergers), xy=(12.5, 435), horizontalalignment='left', fontsize=12)
+axes[1].annotate('{} Halos'.format(num_no_mergers), xy=(12.5, 435), horizontalalignment='left', fontsize=12)
 plt.subplots_adjust(wspace=0, hspace=0)
 plt.savefig('/Volumes/FRIEND/analogs/plots/merger/rc.png', bbox_inches='tight')
 plt.close()
@@ -275,6 +256,8 @@ axes[1].scatter(r_bins, star4_AD_no_merger, c = 'r', alpha = 0.6, s=14, marker='
 axes[0].legend(loc=2, frameon=False)
 axes[0].annotate('Recent 4:1 Merger', xy=(12.5, -260), horizontalalignment='left', fontsize=12)
 axes[1].annotate('No Recent 4:1 Merger', xy=(12.5, -260), horizontalalignment='left', fontsize=12)
+axes[0].annotate('{} Halos'.format(num_mergers), xy=(12.5, -235), horizontalalignment='left', fontsize=12)
+axes[1].annotate('{} Halos'.format(num_no_mergers), xy=(12.5, -235), horizontalalignment='left', fontsize=12)
 plt.subplots_adjust(wspace=0, hspace=0)
 plt.savefig('/Volumes/FRIEND/analogs/plots/merger/ad_lineplot.png', bbox_inches='tight')
 plt.close()
