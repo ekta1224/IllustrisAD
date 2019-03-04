@@ -139,7 +139,7 @@ for halo in halos:
 				star_smoothed_vx.append(np.median(star_x_velocities)) #km/s
 				star_smoothed_vy.append(np.median(star_y_velocities)) #km/s
 				star_smoothed_vz.append(np.median(star_z_velocities)) #km/s
-				star_dispersion.append(np.std(radial_vels))
+				star_dispersion.append(np.std(star_z_velocities))
 	
 		return np.array((star_smoothed_vx)), np.array((star_smoothed_vy)), np.array((star_smoothed_vz)), np.array((star_goodcenter_x)), np.array((star_goodcenter_y)), np.array((star_goodcenter_z)), np.array((star_dispersion))
 	
