@@ -6,7 +6,8 @@ from adjustText import adjust_text
 #check the diffference between COM calculations using DM, star, and
 #gas particles for a subset of halos
 
-ids = [356427, 365141, 383739, 385230, 385343, 387913, 388958, 389486, 390669, 392084, 394566, 395868, 396624, 397062, 397148, 397204, 397889, 398622, 400733, 401663]
+#ids = [356427, 365141, 383739, 385230, 385343, 387913, 388958, 389486, 390669, 392084, 394566, 395868, 396624, 397062, 397148, 397204, 397889, 398622, 400733, 401663]
+ids = [348189, 361428, 368428, 383612, 388303, 392544, 394155, 394942, 396789, 400179, 401705, 402841, 404964, 405300] # controls
 
 halo = np.loadtxt('../data/M31analogs_halo_props.txt')
 dx = []
@@ -110,7 +111,7 @@ adjust_text(texts)
 plt.suptitle('COM difference using gas particles')
 plt.tight_layout()
 plt.subplots_adjust(top=0.9)
-plt.savefig('COM_test_gas_scatter.pdf')
+plt.savefig('COM_test_gas_scatter_control.pdf')
 plt.close()
 
 ## stars
@@ -133,7 +134,7 @@ adjust_text(texts)
 plt.suptitle('COM difference using star particles')
 plt.tight_layout()
 plt.subplots_adjust(top=0.9)
-plt.savefig('COM_test_stars_scatter.pdf')
+plt.savefig('COM_test_stars_scatter_control.pdf')
 plt.close()
 
 ##stars-gas
@@ -156,7 +157,7 @@ adjust_text(texts)
 plt.suptitle('COM difference btwn gas and star particles')
 plt.tight_layout()
 plt.subplots_adjust(top=0.9)
-plt.savefig('COM_test_stars_gas_scatter.pdf')
+plt.savefig('COM_test_stars_gas_scatter_control.pdf')
 plt.close()
 
 
@@ -191,7 +192,7 @@ plt.xlabel(r'$\Delta V_z$  [km/s]')
 plt.suptitle('COM difference using gas particles')
 plt.tight_layout()
 plt.subplots_adjust(top=0.9)
-plt.savefig('COM_test_gas.pdf')
+plt.savefig('COM_test_gas_control.pdf')
 plt.close()
 
 
@@ -224,7 +225,7 @@ plt.xlabel(r'$\Delta V_z$  [km/s]')
 plt.suptitle('COM difference using star particles')
 plt.tight_layout()
 plt.subplots_adjust(top=0.9)
-plt.savefig('COM_test_stars.pdf')
+plt.savefig('COM_test_stars_control.pdf')
 
 ## stars-gas
 plt.figure()
@@ -255,6 +256,6 @@ plt.xlabel(r'$\Delta V_z$  [km/s]')
 plt.suptitle('COM difference btwn gas and star particles')
 plt.tight_layout()
 plt.subplots_adjust(top=0.9)
-plt.savefig('COM_test_stars_gas.pdf')
+plt.savefig('COM_test_stars_gas_control.pdf')
 
 
