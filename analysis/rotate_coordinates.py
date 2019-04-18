@@ -126,6 +126,8 @@ def COM_calculate(id, snap):
         
     newr, newv = RotateFrame(r2, v2)
     np.savetxt('../phast/SFHs/M31analog_%s_gas_properties_snap%s_rotated.txt'%(id, snap), np.column_stack((newr[:,0], newr[:,1], newr[:,2], newv[:,0], newv[:,1], newv[:,2],m, nh, sfr, gz)), delimiter="  ")
+    
+    return 0
 
 if __name__ == "__main__":
     ids = np.loadtxt('../phast/M31analogs_MM1_4Gyr_mstar.txt')
