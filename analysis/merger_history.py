@@ -92,17 +92,6 @@ star3_vrot_no_merger = np.zeros_like(r_bins)
 star4_vrot_no_merger = np.zeros_like(r_bins)
 gas_vrot_no_merger = np.zeros_like(r_bins)
 
-# star1_error_merger = np.zeros_like(r_bins)
-# star2_error_merger = np.zeros_like(r_bins)
-# star3_error_merger = np.zeros_like(r_bins)
-# star4_error_merger = np.zeros_like(r_bins)
-# gas_error_merger = np.zeros_like(r_bins)
-# star1_error_no_merger = np.zeros_like(r_bins)
-# star2_error_no_merger = np.zeros_like(r_bins)
-# star3_error_no_merger = np.zeros_like(r_bins)
-# star4_error_no_merger = np.zeros_like(r_bins)
-# gas_error_no_merger = np.zeros_like(r_bins)
-
 star1_upper_error_merger = np.zeros_like(r_bins)
 star2_upper_error_merger = np.zeros_like(r_bins)
 star3_upper_error_merger = np.zeros_like(r_bins)
@@ -127,29 +116,7 @@ gas_lower_error_no_merger = np.zeros_like(r_bins)
 
 #median and standard deviation
 for i in range(len(r_bins)):
-	# star1_vrot_merger[i] = np.median(star1_data_merger[i])
-	# star2_vrot_merger[i] = np.median(star2_data_merger[i])
-	# star3_vrot_merger[i] = np.median(star3_data_merger[i])
-	# star4_vrot_merger[i] = np.median(star4_data_merger[i])
-	# gas_vrot_merger[i] = np.median(gas_data_merger[i])
-	# star1_vrot_no_merger[i] = np.median(star1_data_no_merger[i])
-	# star2_vrot_no_merger[i] = np.median(star2_data_no_merger[i])
-	# star3_vrot_no_merger[i] = np.median(star3_data_no_merger[i])
-	# star4_vrot_no_merger[i] = np.median(star4_data_no_merger[i])
-	# gas_vrot_no_merger[i] = np.median(gas_data_no_merger[i])
-
-	# star1_error_merger[i] = np.std(star1_data_merger[i])
-	# star2_error_merger[i] = np.std(star2_data_merger[i])
-	# star3_error_merger[i] = np.std(star3_data_merger[i])
-	# star4_error_merger[i] = np.std(star4_data_merger[i])
-	# gas_error_merger[i] = np.std(gas_data_merger[i])
-	# star1_error_no_merger[i] = np.std(star1_data_no_merger[i])
-	# star2_error_no_merger[i] = np.std(star2_data_no_merger[i])
-	# star3_error_no_merger[i] = np.std(star3_data_no_merger[i])
-	# star4_error_no_merger[i] = np.std(star4_data_no_merger[i])
-	# gas_error_no_merger[i] = np.std(gas_data_no_merger[i])
-
-	#trying to get the errors in a different way
+	#errors on the ROTATION velocity -- is this same for AD?
 	star1_vrot_merger[i], star1_lower_error_merger[i], star1_upper_error_merger[i] = calc_errors(star1_data_merger[i])
 	star2_vrot_merger[i], star2_lower_error_merger[i], star2_upper_error_merger[i] = calc_errors(star2_data_merger[i])
 	star3_vrot_merger[i], star3_lower_error_merger[i], star3_upper_error_merger[i] = calc_errors(star3_data_merger[i])
