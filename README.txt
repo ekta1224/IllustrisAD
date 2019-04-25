@@ -26,8 +26,13 @@ column 1,2,3: x,y,z position in ckpc/h
 column 4,5,6: x,y,z velocities (see notes above)
 column 7: halo virial mass (10^10 Msun/h)
 column 8: halo virial radius (ckpc/h)
-column 9: time of the last (4:1) major merger in lookback time (Gyr) -- if None, value of 13.8 Gyr is assigned
-column 10: stellar mass in 10^10 Msun/h
+column 9: stellar mass in 10^10 Msun/h
+column 10: time of the last (4:1) major merger in lookback time (Gyr) -- if None, value of 13.8 Gyr is assigned
+column 11: number of major mergers total (4:1)
+column 12: number of minor mergers total (10:1)
+column 13: Amount of stellar mass that was formed Ex Situ (10^10 Msun/h)
+column 14: Amount of stellar mass that was formed In Situ (10^10 Msun/h)
+column 15: Amount of stellar mass that was accreted from completed mergers (10^10 Msun/h)
 
 
 #Notes:
