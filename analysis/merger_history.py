@@ -1,7 +1,5 @@
 import numpy as np 
 import matplotlib.pyplot as plt 
-from matplotlib import rc 
-from matplotlib.ticker import MaxNLocator
 
 '''
 reads in data from the halo properties files and from the files created in Illustris_curves.py
@@ -10,7 +8,7 @@ output: 2 plots (1 histogram of AD and one line graph of AD)
 '''
 
 halos = np.loadtxt('../data/M31analog_IDs_IllustrisAD.txt') #halo IDs
-IDs, merger_times = np.loadtxt('../data/M31analogs_halo_props.txt', usecols=(0,9,), unpack=True) #halo properties file
+IDs, merger_times = np.loadtxt('../data/M31analogs_halo_props.txt', usecols=(0,10,), unpack=True) #halo properties file
 
 #radial bins -- make sure below matches Illustris_curves.py ==============================================================================================
 R_min = 2 #kpc #CHANGE THIS TO 2 WHEN DOING SMOOTHED
@@ -197,7 +195,7 @@ axes[0].annotate('{} Halos'.format(num_mergers), xy=(-270, 0.0045), horizontalal
 axes[1].annotate('No Recent 4:1 Merger', xy=(-270, 0.002), horizontalalignment='left', fontsize=12)
 axes[1].annotate('{} Halos'.format(num_no_mergers), xy=(-270, 0.0045), horizontalalignment='left', fontsize=12)
 plt.subplots_adjust(wspace=.09, hspace=0)
-plt.savefig('/Volumes/FRIEND/analogs/plots/merger/AD1.png', bbox_inches='tight')
+plt.savefig('/Volumes/FRIEND/analogs/plots/merger/AD.png', bbox_inches='tight')
 plt.close()
 
 #RCs
@@ -235,7 +233,7 @@ axes[1].annotate('No Recent 4:1 Merger', xy=(10, 15), horizontalalignment='left'
 axes[0].annotate('{} Halos'.format(num_mergers), xy=(10, 5), horizontalalignment='left', fontsize=12)
 axes[1].annotate('{} Halos'.format(num_no_mergers), xy=(10, 5), horizontalalignment='left', fontsize=12)
 plt.subplots_adjust(wspace=0, hspace=0)
-plt.savefig('/Volumes/FRIEND/analogs/plots/merger/rc_errors1.png', bbox_inches='tight')
+plt.savefig('/Volumes/FRIEND/analogs/plots/merger/rc_errors.png', bbox_inches='tight')
 plt.close()
 
 #line plot
@@ -281,7 +279,7 @@ axes[1].annotate('No Recent 4:1 Merger', xy=(12.5, -50), horizontalalignment='le
 axes[0].annotate('{} Halos'.format(num_mergers), xy=(12.5, -35), horizontalalignment='left', fontsize=12)
 axes[1].annotate('{} Halos'.format(num_no_mergers), xy=(12.5, -35), horizontalalignment='left', fontsize=12)
 plt.subplots_adjust(wspace=0, hspace=0)
-plt.savefig('/Volumes/FRIEND/analogs/plots/merger/ad_lineplot_median1.png', bbox_inches='tight')
+plt.savefig('/Volumes/FRIEND/analogs/plots/merger/ad_lineplot.png', bbox_inches='tight')
 plt.close()
 
 
