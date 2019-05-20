@@ -18,6 +18,7 @@ h = 0.704
 def va(v_gas, v_star):
 	return v_gas - v_star
 
+#below was used to get the median AD values for each analog. no need to rereun unless change to Illustris_curves.py
 # group1_AD = np.zeros_like(halos)
 # group2_AD = np.zeros_like(halos)
 # group3_AD = np.zeros_like(halos)

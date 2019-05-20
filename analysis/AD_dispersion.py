@@ -34,8 +34,8 @@ def single_plot():
 	plt.tick_params(labelsize=12) 
 	plt.minorticks_on()
 
-#x_vals = np.linspace(-50, 200, 50)
-#plot one
+# x_vals = np.linspace(-50, 200, 50)
+# #plot one
 # m1, b1 = np.polyfit(group1_AD, (star1_med_disp_phi**2), 1, w=(1/group1_error))
 # m2, b2 = np.polyfit(group2_AD, (star2_med_disp_phi**2), 1, w=(1/group2_error))
 # m3, b3 = np.polyfit(group3_AD, (star3_med_disp_phi**2), 1, w=(1/group3_error))
@@ -101,6 +101,37 @@ def single_plot():
 # plt.savefig('/Users/amandaquirk/Desktop/med_AD_dsip_phi_r.png', bbox_inches='tight')
 # plt.close()
 
+# #histograms of velocity ellipsoid components
+# single_plot()
+# plt.hist(star1_med_disp_Z , bins=np.linspace(0, 150, 25), label='Group 1: med = {}'.format(np.median(star1_med_disp_Z)), normed=1, histtype='step', linewidth=1.6,linestyle='--',stacked=True,fill=False, color='b')
+# plt.hist(star2_med_disp_Z , bins=np.linspace(0, 150, 25), label='Group 2: med = {}'.format(np.median(star2_med_disp_Z)), normed=1, histtype='step', linewidth=1.6,stacked=True,fill=False, color='m', hatch='//', alpha=0.4)
+# plt.hist(star3_med_disp_Z , bins=np.linspace(0, 150, 25), label='Group 3: med = {}'.format(np.median(star3_med_disp_Z)), normed=1, histtype='step', linewidth=1.6,stacked=True,fill=True, color='green', alpha=0.4)
+# plt.hist(star4_med_disp_Z , bins=np.linspace(0, 150, 25), label='Group 4: med = {}'.format(np.median(star4_med_disp_Z)), normed=1, histtype='step', linewidth=1.6,linestyle='-',stacked=True,fill=False, color='r')
+# plt.legend(loc=2, frameon=False)
+# plt.xlabel(r'$\sigma_{z}$')
+# plt.savefig('/Users/amandaquirk/Desktop/med_z_hist.png', bbox_inches='tight')
+# plt.close()
+
+# single_plot()
+# plt.hist(star1_med_disp_phi, bins=np.linspace(0, 150, 25), label='Group 1: med = {}'.format(np.median(star1_med_disp_phi)), normed=1, histtype='step', linewidth=1.6,linestyle='--',stacked=True,fill=False, color='b')
+# plt.hist(star2_med_disp_phi, bins=np.linspace(0, 150, 25), label='Group 2: med = {}'.format(np.median(star2_med_disp_phi)), normed=1, histtype='step', linewidth=1.6,stacked=True,fill=False, color='m', hatch='//', alpha=0.4)
+# plt.hist(star3_med_disp_phi, bins=np.linspace(0, 150, 25), label='Group 3: med = {}'.format(np.median(star3_med_disp_phi)), normed=1, histtype='step', linewidth=1.6,stacked=True,fill=True, color='green', alpha=0.4)
+# plt.hist(star4_med_disp_phi, bins=np.linspace(0, 150, 25), label='Group 4: med = {}'.format(np.median(star4_med_disp_phi)), normed=1, histtype='step', linewidth=1.6,linestyle='-',stacked=True,fill=False, color='r')
+# plt.legend(loc=2, frameon=False)
+# plt.xlabel(r'$\sigma_{\phi}$')
+# plt.savefig('/Users/amandaquirk/Desktop/med_phi_hist.png', bbox_inches='tight')
+# plt.close()
+
+# single_plot()
+# plt.hist(star1_med_disp_R, bins=np.linspace(0, 150, 25), label='Group 1: med = {}'.format(np.median(star1_med_disp_R)), normed=1, histtype='step', linewidth=1.6,linestyle='--',stacked=True,fill=False, color='b')
+# plt.hist(star2_med_disp_R, bins=np.linspace(0, 150, 25), label='Group 2: med = {}'.format(np.median(star2_med_disp_R)), normed=1, histtype='step', linewidth=1.6,stacked=True,fill=False, color='m', hatch='//', alpha=0.4)
+# plt.hist(star3_med_disp_R, bins=np.linspace(0, 150, 25), label='Group 3: med = {}'.format(np.median(star3_med_disp_R)), normed=1, histtype='step', linewidth=1.6,stacked=True,fill=True, color='green', alpha=0.4)
+# plt.hist(star4_med_disp_R, bins=np.linspace(0, 150, 25), label='Group 4: med = {}'.format(np.median(star4_med_disp_R)), normed=1, histtype='step', linewidth=1.6,linestyle='-',stacked=True,fill=False, color='r')
+# plt.legend(loc=2, frameon=False)
+# plt.xlabel(r'$\sigma_{R}$')
+# plt.savefig('/Users/amandaquirk/Desktop/med_r_hist.png', bbox_inches='tight')
+# plt.close()
+
 #histograms of anisotropies
 single_plot()
 plt.hist(z_r_1, bins=np.linspace(0, 2, 25), label='Group 1: med = {}'.format(np.median(z_r_1)), normed=1, histtype='step', linewidth=1.6,linestyle='--',stacked=True,fill=False, color='b')
@@ -108,7 +139,7 @@ plt.hist(z_r_2, bins=np.linspace(0, 2, 25), label='Group 2: med = {}'.format(np.
 plt.hist(z_r_3, bins=np.linspace(0, 2, 25), label='Group 3: med = {}'.format(np.median(z_r_3)), normed=1, histtype='step', linewidth=1.6,stacked=True,fill=True, color='green', alpha=0.4)
 plt.hist(z_r_4, bins=np.linspace(0, 2, 25), label='Group 4: med = {}'.format(np.median(z_r_4)), normed=1, histtype='step', linewidth=1.6,linestyle='-',stacked=True,fill=False, color='r')
 plt.legend(loc=2, frameon=False)
-plt.xlabel(r'$\sigma_{z} / \sigma_{R}$')
+plt.xlabel(r'$\frac{\sigma_{z}}{\sigma_{r}} $')
 plt.savefig('/Users/amandaquirk/Desktop/med_z_r_hist.png', bbox_inches='tight')
 plt.close()
 
@@ -118,7 +149,8 @@ plt.hist(phi_r_2, bins=np.linspace(0, 2, 25), label='Group 2: med = {}'.format(n
 plt.hist(phi_r_3, bins=np.linspace(0, 2, 25), label='Group 3: med = {}'.format(np.median(phi_r_3)), normed=1, histtype='step', linewidth=1.6,stacked=True,fill=True, color='green', alpha=0.4)
 plt.hist(phi_r_4, bins=np.linspace(0, 2, 25), label='Group 4: med = {}'.format(np.median(phi_r_4)), normed=1, histtype='step', linewidth=1.6,linestyle='-',stacked=True,fill=False, color='r')
 plt.legend(loc=2, frameon=False)
-plt.xlabel(r'$\sigma_{\phi} / \sigma_{R}$')
+plt.xlabel(r'$\frac{\sigma_{\phi}}{\sigma_{R}}$')
 plt.savefig('/Users/amandaquirk/Desktop/med_phi_r_hist.png', bbox_inches='tight')
 plt.close()
+
 

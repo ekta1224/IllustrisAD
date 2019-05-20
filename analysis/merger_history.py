@@ -42,7 +42,7 @@ for halo in halos:
 	merger_time = merger_times[N]
 
 	#divide into merger vs non merger groups
-	if merger_time < 5: #Gyr
+	if merger_time < 7: #Gyr
 		for i in range(len(star1_vrot)):
 			if np.isnan(star1_vrot[i]) == False:
 				star1_data_merger[i].append(star1_vrot[i])

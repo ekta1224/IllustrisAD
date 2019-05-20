@@ -62,14 +62,19 @@ for halo in halos:
 		#(coordinates are already shifted to 0,0,0)
 		return np.sqrt((x**2) + (y**2) + (z**2)) #whatever units the input is in
 	
+	#used for calculating velocities in the x y plane
+	def projected_distance(x, y, z):
+		#(coordinates are already shifted to 0,0,0)
+		return np.sqrt((x**2) + (y**2)) #whatever units the input is in
+
 	#calculate the radial velocity
-	def radial_v(x, y, z, vx, vy, vz):
+	def radial_v(x, y, z, vx, vy, vz): #just want in x y plane so removing z component
 		#convert kpc/h to km
 		x_km = x * 3.086e+16 / h
 		y_km = y * 3.086e+16 / h
 		z_km = z * 3.086e+16 / h
-		dot_product = (x_km * vx) + (y_km * vy)+ (z_km * vz) 
-		r_mag = distance(x_km, y_km, z_km)
+		dot_product = (x_km * vx) + (y_km * vy) 
+		r_mag = projected_distance(x_km, y_km, z_km)
 		return dot_product / r_mag #km/s
 	
 	#get rid of star partiles that are really wind
@@ -118,9 +123,9 @@ for halo in halos:
 	gas_r = distance(gas_x / h, gas_y / h, gas_z / h) #kpc
 
 	#calculate the rotation speed, assuming it's the same as tangential once averaged over the radial bin
-	def vrot(x, y, z, vx, vy, vz):
+	def vrot(x, y, z, vx, vy, vz): #just want planar so removing z component
 		v_rad = radial_v(x, y, z, vx, vy, vz) #km/s
-		v_tot = np.sqrt((vx**2) + (vy**2) + (vz**2)) #km/s
+		v_tot = np.sqrt((vx**2) + (vy**2)) #km/s
 		v_rot = np.sqrt((v_tot**2) - (v_rad**2))
 		return v_rot
 	
