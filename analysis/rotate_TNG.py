@@ -1,20 +1,7 @@
 import numpy as np 
+import matplotlib.pyplot as plt 
 
-#Ekta's functions to calculate the CoM and to rotate the frame -- as in /Volumes/FRIEND/analogs/IllustrisAD/analysis/rotate_coordinates.py
-def COMdefine(a,b,c,m):
-    # Function to compute the center of mass position or velocity generically
-    # input: array (a,b,c) of positions or velocities and the mass
-    # returns: 3 floats  (the center of mass coordinates)
-    
-        # xcomponent Center of mass  
-        Acom = np.sum(a*m)/np.sum(m)
-        # ycomponent Center of mass
-        Bcom = np.sum(b*m)/np.sum(m)
-        # zcomponent
-        Ccom = np.sum(c*m)/np.sum(m)
-
-        return Acom, Bcom, Ccom
-
+#Ekta's function to rotate the frame -- as in /Volumes/FRIEND/analogs/IllustrisAD/analysis/rotate_coordinates.py
 def RotateFrame(posI,velI):
 	# input:  3D array of positions and velocities
 	# returns: 3D array of rotated positions and velocities such that j is in z direction
@@ -49,54 +36,71 @@ def RotateFrame(posI,velI):
 	return pos, vel
 
 #read in IDs
-isolated_ids = np.loadtxt('/Users/amandaquirk/Desktop/isolated_central_IDs.txt')
-M33_comp_ids = np.loadtxt('/Users/amandaquirk/Desktop/M33com_central_IDs.txt')
-all_ids = list(isolated_ids) + list(M33_comp_ids)
+noM33_ids = np.loadtxt('/Users/amandaquirk/Desktop/M31_analogs_IDs_noM33_TNG100.txt')
+M33_ids = np.loadtxt('/Users/amandaquirk/Desktop/M31_analogs_IDs_M33_TNG100.txt')
+all_ids = list(noM33_ids)# + list(M33_ids)
 
-star_x, star_y, star_z, star_vx, star_vy, star_vz, star_tform = np.loadtxt('/Volumes/FRIEND/analogs/TNGdata/{}_star_properties.txt'.format(all_ids[0]), usecols=(0,1,2,3,4,5,7), unpack=True)
-gas_x, gas_y, gas_z, gas_vx, gas_vy, gas_vz, gas_nf = np.loadtxt('/Volumes/FRIEND/analogs/TNGdata/{}_gas_properties.txt'.format(all_ids[0]), usecols=(0,1,2,3,4,5,7), unpack=True)
-dm_x, dm_y, dm_z, dm_vx, dm_vy, dm_vz, dm_potential = np.loadtxt('/Volumes/FRIEND/analogs/TNGdata/{}_dm_properties.txt'.format(all_ids[0]), usecols=(0,1,2,3,4,5), unpack=True)
+#read in all of the subhalo properties to get the COMs
+ref_ID, x_coms, y_coms, z_coms, vx_coms, vy_coms, vz_coms = np.loadtxt('/Users/amandaquirk/Desktop/M31analogs_halo_props_TNG100.txt', usecols=(0,1,2,3,4,5,6,), unpack=True)
 
-def potential_to_mass(potential):
-	return 
+for i in range(len(all_ids)):
+	star_x, star_y, star_z, star_vx, star_vy, star_vz, star_mass, star_tform = np.loadtxt('/Volumes/FRIEND/analogs/TNGdata/{}_star_properties.txt'.format(all_ids[i]), usecols=(0,1,2,3,4,5,6,7), unpack=True)
+	gas_x, gas_y, gas_z, gas_vx, gas_vy, gas_vz, gas_nf = np.loadtxt('/Volumes/FRIEND/analogs/TNGdata/{}_gas_properties.txt'.format(all_ids[i]), usecols=(0,1,2,3,4,5,7), unpack=True)
+	#dm_x, dm_y, dm_z, dm_vx, dm_vy, dm_vz = np.loadtxt('/Volumes/FRIEND/analogs/TNGdata/{}_dm_properties.txt'.format(all_ids[i]), usecols=(0,1,2,3,4,5), unpack=True)
 
-dm_mass = potential_to_mass(dm_potential)
+	#dm_mass = np.ones(len(dm_x)) * 7.5 * 10**6 #constant throughout the simulation
 
-#step 1 is to find the CoM of the dark matter -- set this as the origin
-vx_com, vy_com, vz_com = COMdefine(dm_vx, dm_vy, dm_vz, dm_mass)
-x_com, y_com, z_com = COMdefine(dm_x, dm_y, dm_z, dm_mass)
-#print('Found COMs')
+	#grab the subhalo's position and velocity COM (really the position but we're going with it)
+	N = np.where(all_ids[i] == ref_ID)
+	#print(N)
+	x_com = x_coms[N]
+	y_com = y_coms[N]
+	z_com = z_coms[N]
+	vx_com = vx_coms[N]
+	vy_com = vy_coms[N]
+	vz_com = vz_coms[N]
 
-#subtract off COM so all particles are relative to that origin
-star_x0 = star_x - x_com
-star_y0 = star_y - y_com
-star_z0 = star_z - z_com
-star_vx0 = star_vx - vx_com
-star_vy0 = star_vy - vy_com
-star_vz0 = star_vz - vz_com
-gas_x0 = gas_x - x_com
-gas_y0 = gas_y - y_com
-gas_z0 = gas_z - z_com
-gas_vx0 = gas_vx - vx_com
-gas_vy0 = gas_vy - vy_com
-gas_vz0 = gas_vz - vz_com
-#print('Shifted coordinates to star COM')
+	#subtract off COM so all particles are relative to that origin
+	star_x0 = star_x - x_com
+	star_y0 = star_y - y_com
+	star_z0 = star_z - z_com
+	star_vx0 = star_vx - vx_com
+	star_vy0 = star_vy - vy_com
+	star_vz0 = star_vz - vz_com
+	gas_x0 = gas_x - x_com
+	gas_y0 = gas_y - y_com
+	gas_z0 = gas_z - z_com
+	gas_vx0 = gas_vx - vx_com
+	gas_vy0 = gas_vy - vy_com
+	gas_vz0 = gas_vz - vz_com
+	#print('Shifted coordinates to COM')
 
-r_star = np.array([star_x0, star_y0, star_z0]).T #array to go into RotateFrame
-v_star = np.array([star_vx0, star_vy0, star_vz0]).T #array to go into RotateFrame
-r_gas = np.array([gas_x0, gas_y0, gas_z0]).T #array to go into RotateFrame
-v_gas = np.array([gas_vx0, gas_vy0, gas_vz0]).T #array to go into RotateFrame
+	r_star = np.array([star_x0, star_y0, star_z0]).T #array to go into RotateFrame
+	v_star = np.array([star_vx0, star_vy0, star_vz0]).T #array to go into RotateFrame
+	r_gas = np.array([gas_x0, gas_y0, gas_z0]).T #array to go into RotateFrame
+	v_gas = np.array([gas_vx0, gas_vy0, gas_vz0]).T #array to go into RotateFrame
 
-#transform the coordinates
-star_r_transf, star_v_transf = RotateFrame(r_star, v_star)
-#print('Rotated star coordinates')
-gas_r_transf, gas_v_transf = RotateFrame(r_gas, v_gas)
-#print('Rotated gas coordinates')
+	#transform the coordinates
+	star_r_transf, star_v_transf = RotateFrame(r_star, v_star)
+	#print('Rotated star coordinates')
+	gas_r_transf, gas_v_transf = RotateFrame(r_gas, v_gas)
+	#print('Rotated gas coordinates')
 
-# #save gas and star data
-np.savetxt('/Volumes/FRIEND/analogs/TNGdata/{}_rotated_star_particles.txt'.format(int(all_ids[0])), np.column_stack([star_r_transf[:,0], star_r_transf[:,1], star_r_transf[:,2], star_v_transf[:,0], star_v_transf[:,1], star_v_transf[:,2], star_tform]))
-np.savetxt('/Volumes/FRIEND/analogs/TNGdata/{}_rotated_gas_particles.txt'.format(int(all_ids[0])), np.column_stack([gas_r_transf[:,0], gas_r_transf[:,1], gas_r_transf[:,2], gas_v_transf[:,0], gas_v_transf[:,1], gas_v_transf[:,2], gas_nf]))
+	# #save gas and star data
+	np.savetxt('/Volumes/FRIEND/analogs/TNGdata/{}_rotated_star_COM_particles.txt'.format(int(all_ids[i])), np.column_stack([star_r_transf[:,0], star_r_transf[:,1], star_r_transf[:,2], star_v_transf[:,0], star_v_transf[:,1], star_v_transf[:,2], star_tform]))
+	np.savetxt('/Volumes/FRIEND/analogs/TNGdata/{}_rotated_gas_COM_particles.txt'.format(int(all_ids[i])), np.column_stack([gas_r_transf[:,0], gas_r_transf[:,1], gas_r_transf[:,2], gas_v_transf[:,0], gas_v_transf[:,1], gas_v_transf[:,2], gas_nf]))
 
+	if i % 100 == 0:
+		print(i)
+	#plot spatial maps to see what's up 
+		plt.scatter(star_r_transf[:,0], star_r_transf[:,1], alpha=.2, s=3)
+		plt.scatter(0,0, c='r')
+		plt.savefig('/Volumes/FRIEND/analogs/plots/TNG/rotation_maps/{}_star.png'.format(int(all_ids[i])))
+		plt.close()
+		plt.scatter(gas_r_transf[:,0], gas_r_transf[:,1], alpha=.2, s=3)
+		plt.scatter(0,0, c='r')
+		plt.savefig('/Volumes/FRIEND/analogs/plots/TNG/rotation_maps/{}_gas.png'.format(int(all_ids[i])))
+		plt.close()
 
 
 
