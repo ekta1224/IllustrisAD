@@ -1,6 +1,6 @@
 import numpy as np
-from rotate_coordinates import COMdefine
-
+from rotate_coordinates import COMdefine, RotateFrame
+import os
 
 #calculte the combined gas and stellar COM for some subset of analogs
 #and redo the full analysis to see whether the rotation curves change
@@ -46,12 +46,58 @@ for id in ids:
 
     mass = list(mgas) + list(mstars)
 
+    rnew_test = COMdefine(x,y,z,np.array(mass)*1e10/0.704)
     COMr.append(COMdefine(x,y,z,np.array(mass)*1e10/0.704))
     #print COMdefine(x,y,z,np.array(mass)*1e10/0.704)
     #print r1
 
+    vnew_test = COMdefine(vx,vy,vz,np.array(mass)*1e10/0.704)
     COMv.append(COMdefine(vx,vy,vz,np.array(mass)*1e10/0.704))
     #print COMdefine(vx,vy,vz,np.array(mass)*1e10/0.704)
     #print v1
 
+    ##### USE THIS NEW COM TO ROTATE THE PARTICLES
+    m = gas[:,6]
+    nh = gas[:,7]
+    sfr = gas[:,8]
+    gz = gas[:,9]
+
+    x = gas[:,0] - rnew_test[0]
+    y = gas[:,1] - rnew_test[1]
+    z = gas[:,2] - rnew_test[2]
+    r2 = np.array([x,y,z]).T 
+    
+    vx = gas[:,3] - vnew_test[0]
+    vy = gas[:,4] - vnew_test[1]
+    vz = gas[:,5] - vnew_test[2]
+    v2 = np.array([vx,vy,vz]).T
+        
+    newr, newv = RotateFrame(r2, v2)
+    np.savetxt('../data/M31analog_%s_gas_properties_rotated_COMtest.txt'%id, np.column_stack((newr[:,0], newr[:,1], newr[:,2], newv[:,0], newv[:,1], newv[:,2],m, nh, sfr, gz)), delimiter="  ")
+    os.system('git add ../data/M31analog_%s_gas_properties_rotated_COMtest.txt'%id)
+
+    #stars
+    m = stars[:,6]
+    tform = stars[:,7]    
+    gz = stars[:,8]
+    newr, newv = RotateFrame(r2, v2)
+
+    x = stars[:,0] - rnew_test[0]
+    y = stars[:,1] - rnew_test[1]
+    z = stars[:,2] - rnew_test[2]
+    r2 = np.array([x,y,z]).T 
+    
+    vx = stars[:,3] - vnew_test[0]
+    vy = stars[:,4] - vnew_test[1]
+    vz = stars[:,5] - vnew_test[2]
+    v2 = np.array([vx,vy,vz]).T
+    
+    newr, newv = RotateFrame(r2, v2)
+    np.savetxt('../data/M31analog_%s_star_properties_rotated_COMtest.txt'%id, np.column_stack((newr[:,0], newr[:,1], newr[:,2], newv[:,0], newv[:,1], newv[:,2],m, tform, gz)), delimiter="  ")
+    os.system('git add ../data/M31analog_%s_star_properties_rotated_COMtest.txt'%id)
+
+
 np.savetxt('COM_gas_stars_test.txt', np.column_stack((ids, COMr, COMv)))
+
+
+
