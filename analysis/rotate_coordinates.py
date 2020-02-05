@@ -50,10 +50,10 @@ def RotateFrame(posI,velI):
 
 
 def COM(id, noM33=False):
-    halo = np.loadtxt('../data/M31analogs_halo_props.txt')
+    halo = np.loadtxt('../data/COM_gas_stars_test.txt')#M31analogs_halo_props.txt')
     if noM33:
-	    halo = np.loadtxt('../data/M31analogs_halo_props_noM33.txt')
-    mask = np.where(halo[:,0] == id)[0][0]
+	    halo = np.loadtxt('../data/M31analogs_halo_props_strictly_noM33.txt')
+    mask = np.where(halo[:,0] == id)[0]#[0]
     # get the halo COM position and velocity -- should this be the halo COM? or respective to each particle type?
     r1 = np.array([halo[:,1][mask], halo[:,2][mask], halo[:,3][mask]])
     v1 = np.array([halo[:,4][mask], halo[:,5][mask], halo[:,6][mask]])
@@ -77,11 +77,11 @@ def COM(id, noM33=False):
     v2 = np.array([vx,vy,vz]).T
         
     newr, newv = RotateFrame(r2, v2)
-    np.savetxt('../data/M31analog_%s_gas_properties_rotated.txt'%id, np.column_stack((newr[:,0], newr[:,1], newr[:,2], newv[:,0], newv[:,1], newv[:,2],m, nh, sfr, gz)), delimiter="  ")
+    np.savetxt('/Volumes/Titan/analogs/data/COM_test/M31analog_%s_gas_properties_rotated.txt'%id, np.column_stack((newr[:,0], newr[:,1], newr[:,2], newv[:,0], newv[:,1], newv[:,2],m, nh, sfr, gz)), delimiter="  ")
     
 
     #STARS
-    stars = np.loadtxt('../data/M31analog_%s_star_properties.txt'%id)
+    stars = np.loadtxt('/Volumes/Titan/analogs/data/COM_test/M31analog_%s_star_properties.txt'%id)
     x = stars[:,0] - r1[0]
     y = stars[:,1] - r1[1]
     z = stars[:,2] - r1[2]
@@ -101,62 +101,68 @@ def COM(id, noM33=False):
 
     return 0
 
-def COM_calculate(id, snap):
-    ''' this is to rotate the data obtained to create SFHs only'''
+# def COM_calculate(id, snap):
+#     ''' this is to rotate the data obtained to create SFHs only'''
 
-    #GAS
-    gas = np.loadtxt('../phast/SFHs/M31analog_%s_gas_properties_snap%s.txt'%(id,snap))
-    m = gas[:,6]
-    nh = gas[:,7]
-    sfr = gas[:,8]
-    gz = gas[:,9]
+#     #GAS
+#     gas = np.loadtxt('../phast/SFHs/M31analog_%s_gas_properties_snap%s.txt'%(id,snap))
+#     m = gas[:,6]
+#     nh = gas[:,7]
+#     sfr = gas[:,8]
+#     gz = gas[:,9]
 
-    r1 = COMdefine(gas[:,0], gas[:,1], gas[:,2], m*1e10/0.704)
-    v1 = COMdefine(gas[:,3], gas[:,4], gas[:,5], m*1e10/0.704)
+#     r1 = COMdefine(gas[:,0], gas[:,1], gas[:,2], m*1e10/0.704)
+#     v1 = COMdefine(gas[:,3], gas[:,4], gas[:,5], m*1e10/0.704)
 
-    x = gas[:,0] - r1[0]
-    y = gas[:,1] - r1[1]
-    z = gas[:,2] - r1[2]
-    r2 = np.array([x,y,z]).T 
+#     x = gas[:,0] - r1[0]
+#     y = gas[:,1] - r1[1]
+#     z = gas[:,2] - r1[2]
+#     r2 = np.array([x,y,z]).T 
     
-    vx = gas[:,3] - v1[0]
-    vy = gas[:,4] - v1[1]
-    vz = gas[:,5] - v1[2]
-    v2 = np.array([vx,vy,vz]).T
+#     vx = gas[:,3] - v1[0]
+#     vy = gas[:,4] - v1[1]
+#     vz = gas[:,5] - v1[2]
+#     v2 = np.array([vx,vy,vz]).T
         
-    newr, newv = RotateFrame(r2, v2)
-    np.savetxt('../phast/SFHs/M31analog_%s_gas_properties_snap%s_rotated.txt'%(id, snap), np.column_stack((newr[:,0], newr[:,1], newr[:,2], newv[:,0], newv[:,1], newv[:,2],m, nh, sfr, gz)), delimiter="  ")
+#     newr, newv = RotateFrame(r2, v2)
+#     np.savetxt('../phast/SFHs/M31analog_%s_gas_properties_snap%s_rotated.txt'%(id, snap), np.column_stack((newr[:,0], newr[:,1], newr[:,2], newv[:,0], newv[:,1], newv[:,2],m, nh, sfr, gz)), delimiter="  ")
     
-    return 0
+#     return 0
 
-if __name__ == "__main__":
-    ids = np.loadtxt('../phast/M31analogs_MM1_4Gyr_mstar.txt')
-    print len(ids)
-    snaps = [98, 112, 121, 126, 129, 131, 132, 133, 134]
-    for id in ids:
-        for snap in snaps:
-            COM_calculate(int(id), snap)
-    assert False
+# if __name__ == "__main__":
+#     ids = np.loadtxt('../phast/M31analogs_MM1_4Gyr_mstar.txt')
+#     print len(ids)
+#     snaps = [98, 112, 121, 126, 129, 131, 132, 133, 134]
+#     for id in ids:
+#         for snap in snaps:
+#             COM_calculate(int(id), snap)
+#     assert False
 
-    #rotate additional analogs that don't have to have an M33
-    orig_subids = np.loadtxt('../data/M31analog_IDs_IllustrisAD.txt')
-    add_subids = np.concatenate((np.loadtxt('../phast/M31analogs_MM1_4Gyr_mstar_noM33.txt'),np.loadtxt('../phast/M31analogs_noMM8Gyr_mstar_noM33.txt')))
-    print len(add_subids)
-    subids = []
-    for i in add_subids:
-        if i in orig_subids:
-            continue
-        else:
-            subids.append(i)
-    print len(subids)
+#     #rotate additional analogs that don't have to have an M33
+#     orig_subids = np.loadtxt('../data/M31analog_IDs_IllustrisAD.txt')
+#     add_subids = np.concatenate((np.loadtxt('../phast/M31analogs_MM1_4Gyr_mstar_noM33.txt'),np.loadtxt('../phast/M31analogs_noMM8Gyr_mstar_noM33.txt')))
+#     print len(add_subids)
+#     subids = []
+#     for i in add_subids:
+#         if i in orig_subids:
+#             continue
+#         else:
+#             subids.append(i)
+#     print len(subids)
 
-    for id in subids:
-        print id
-        COM(int(id), noM33=True)
+#     for id in subids:
+#         print id
+#         COM(int(id), noM33=True)
 
-    assert False
-    ids = np.loadtxt('../data/M31analogs_halo_props.txt')[:,0]
-    for id in ids:
-        print id
-        COM(int(id))
+#     assert False
+#     ids = np.loadtxt('../data/M31analogs_halo_props.txt')[:,0]
+#     for id in ids:
+#         print id
+#         COM(int(id))
 
+#run above functions
+halos = [3.564270000000000000e+05, 3.874560000000000000e+05, 4.000040000000000000e+05, 4.053000000000000000e+05, 4.089160000000000000e+05, 4.122090000000000000e+05, 4.174200000000000000e+05, 4.236530000000000000e+05, 4.282060000000000000e+05, 4.341020000000000000e+05]
+halos = [int(a) for a in halos]
+
+for halo in halos: 
+    COM(halo, noM33=True) 
