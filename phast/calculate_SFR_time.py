@@ -42,7 +42,7 @@ for id,rem in zip(ids,remloc):
 
         m,b = per_bi(xs[0], ys[0], 0., 0.)
         yrange2 = m*ppx2+b
-
+        print m,b
 
         print 'total lens x,y',  len(ppx2), len(ppy2)
         right2 = (ppy2 <= yrange2)
