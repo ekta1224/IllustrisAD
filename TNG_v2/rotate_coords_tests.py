@@ -10,7 +10,7 @@ def RotateFrame(posI,velI):
     L = np.sum(np.cross(posI,velI), axis=0)
     # normalize the vector
     L_norm = L/np.sqrt(np.sum(L**2))
-    print(L_norm)
+    #print(L_norm)
 
     # Set up rotation matrix to map L_norm to z unit vector (disk in xy-plane)
     
