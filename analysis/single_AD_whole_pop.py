@@ -7,8 +7,8 @@ groups the analogs into bin based on their merger history
 output: 2 plots (1 histogram of AD and one line graph of AD)
 '''
 
-halos = np.loadtxt('../data/M31analog_IDs_IllustrisAD.txt') #halo IDs M31analog_IDs_IllustrisAD.txt
-IDs, merger_times = np.loadtxt('../data/M31analogs_halo_props.txt', usecols=(0,10,), unpack=True) #halo properties file
+halos = np.loadtxt('/Volumes/Titan/analogs/IllustrisAD/TNG_v2/M31analogs_halo_props_TNG100_revised.txt', usecols=(0,), unpack=True) #halo IDs M31analog_IDs_IllustrisAD.txt
+IDs, merger_times = np.loadtxt('/Volumes/Titan/analogs/IllustrisAD/TNG_v2/M31analogs_merger_props_TNG100_revised.txt', usecols=(0,2,), unpack=True) #halo properties file
 # noM33_ids = np.loadtxt('/Volumes/FRIEND/analogs/TNGdata/M31_analogs_IDs_noM33_TNG100.txt')
 # M33_ids = np.loadtxt('/Volumes/FRIEND/analogs/TNGdata/M31_analogs_IDs_M33_TNG100.txt')
 # halos = [int(a) for a in M33_ids]
@@ -40,7 +40,7 @@ gas_data_no_merger = [[] for i in range(len(r_bins))]
 for halo in halos:
 	#read in data
 	print(halo)
-	gas_vrot, star1_vrot, star2_vrot, star3_vrot, star4_vrot = np.loadtxt('/Volumes/Titan/analogs/data/{}_vrot_gas_smooted.txt'.format(int(halo)), usecols=(1,2,3,4,5,), unpack=True) #km/s
+	gas_vrot, star1_vrot, star2_vrot, star3_vrot, star4_vrot = np.loadtxt('/Volumes/Titan/analogs/TNGdata/smoothed_vrot/{}_vrot_smoothed.txt'.format(int(halo)), usecols=(1,2,3,4,5,), unpack=True) #km/s
 
 	#get time of last merger
 	N = np.where(halo == IDs)
@@ -202,10 +202,10 @@ for ax in axes:
 	for axis in ['top','bottom','left','right']:
 	        ax.spines[axis].set_linewidth(1)
 
-axes[1].hist(star1_AD_merger, bins=range(-100, 150, 10), label=r'$\rm \leq 1\ Gyr,\ \overline{v_{a}}$' + r'$={}$'.format(round(np.median(star1_AD_merger),2)) + r'$\rm \ km \ s^{-1}$', density=True, histtype='step', linewidth=1.6,linestyle='--',stacked=True,fill=False, color='b')
-axes[1].hist(star2_AD_merger, bins=range(-100, 150, 10), label=r'$\rm 1-5\ Gyr,\ \overline{v_{a}}$' + r'$={}$'.format(round(np.median(star2_AD_merger),2)) + r'$\rm \ km \ s^{-1}$', density=True, histtype='step', linewidth=1.6,stacked=True,fill=False, color='m', hatch='//', alpha=0.4)
-axes[1].hist(star3_AD_merger, bins=range(-100, 150, 10), label=r'$\rm 5-10\ Gyr,\ \overline{v_{a}}$' + r'$={}$'.format(round(np.median(star3_AD_merger),2)) + r'$\rm \ km \ s^{-1}$', density=True, histtype='step', linewidth=1.6,stacked=True,fill=True, color='green', alpha=0.4)
-axes[1].hist(star4_AD_merger, bins=range(-100, 150, 10), label=r'$\rm \geq 10\ Gyr,\ \overline{v_{a}}$' + r'$={}$'.format(round(np.median(star4_AD_merger),2)) + r'$\rm \ km \ s^{-1}$', density=True, histtype='step', linewidth=1.6,linestyle='-',stacked=True,fill=False, color='r')
+axes[1].hist(star1_AD_merger, bins=range(-100, 150, 10), label=r'$\rm \leq 1\ Gyr,\ \overline{v_{a}}$' + r'$={}$'.format(round(np.median(star1_AD_merger),2)) + r'$\rm \ km \ s^{-1}$', normed=True, histtype='step', linewidth=1.6,linestyle='--',stacked=True,fill=False, color='b')
+axes[1].hist(star2_AD_merger, bins=range(-100, 150, 10), label=r'$\rm 1-5\ Gyr,\ \overline{v_{a}}$' + r'$={}$'.format(round(np.median(star2_AD_merger),2)) + r'$\rm \ km \ s^{-1}$', normed=True, histtype='step', linewidth=1.6,stacked=True,fill=False, color='m', hatch='//', alpha=0.4)
+axes[1].hist(star3_AD_merger, bins=range(-100, 150, 10), label=r'$\rm 5-10\ Gyr,\ \overline{v_{a}}$' + r'$={}$'.format(round(np.median(star3_AD_merger),2)) + r'$\rm \ km \ s^{-1}$', normed=True, histtype='step', linewidth=1.6,stacked=True,fill=True, color='green', alpha=0.4)
+axes[1].hist(star4_AD_merger, bins=range(-100, 150, 10), label=r'$\rm \geq 10\ Gyr,\ \overline{v_{a}}$' + r'$={}$'.format(round(np.median(star4_AD_merger),2)) + r'$\rm \ km \ s^{-1}$', normed=True, histtype='step', linewidth=1.6,linestyle='-',stacked=True,fill=False, color='r')
 axes[1].legend(loc=1, frameon=False, fontsize=12)
 axes[1].set_xlim(-115, 150)
 axes[1].set_xlabel(r'$ \rm Asymmetric\ Drift:\ \itv_{a}\ \rm(km\ s^{-1})$', fontsize=16)
@@ -216,7 +216,7 @@ axes[0].errorbar(r_bins, star1_vrot_merger, yerr = star1_error_merger, errorever
 axes[0].errorbar(r_bins, star2_vrot_merger, yerr = star2_error_merger, errorevery=19, c = 'm', alpha = 0.6, label=r'$\rm 1-5\ Gyr$')
 axes[0].errorbar(r_bins, star3_vrot_merger, yerr = star3_error_merger, errorevery=18, c = 'green', alpha = 0.6, label=r'$\rm 5-10\ Gyr$')
 axes[0].errorbar(r_bins, star4_vrot_merger, yerr = star4_error_merger, errorevery=17, c = 'r', alpha = 0.6, linestyle=':', label=r'$\rm \geq 10\ Gyr$')
-axes[0].set_ylim(0,220)
+axes[0].set_ylim(0,270)
 axes[0].set_xlim(0,22)
 axes[0].set_ylabel(r'$ \rm Rotation\ Velocity:\ \itv_{\rm rot}\ \rm(km\ s^{-1})$', fontsize=16)
 axes[0].set_xlabel(r'$\rm Radial\ Distance:\ \it r\ \rm (kpc)$', fontsize=16)

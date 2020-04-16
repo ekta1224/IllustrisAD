@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import rc
 
+median_merger, lerror_merger, uerror_merger, median_no, lerror_no, uerror_no = np.loadtxt('/Volumes/Titan/analogs/TNGdata/comp_fig_data.txt', unpack=True)
+
 def single_plot():
 	rc('font', family = 'serif')
 	fig, ax=plt.subplots(1)
@@ -28,13 +30,13 @@ m31_x_err = np.array(m31_age) / 2
 
 illustris_age = [0, 1e9, 1e9, 5e9, 5e9, 10e9, 10e9, 13.7e9] 
 
-merger_ad = [-2.25, -2.25, 57.28, 57.28, 87.30, 87.30, 100.28, 100.28]
-merger_upper_err = [8.33, 8.33, 13.22, 13.22, 11.68, 11.68, 14.84, 14.84]
-merger_lower_err = [10.7, 10.7, 23.23, 23.23, 27.75, 27.75, 22.67, 22.67] 
+merger_ad =        [median_merger[0], median_merger[0], median_merger[1], median_merger[1], median_merger[2], median_merger[2], median_merger[3], median_merger[3]]
+merger_upper_err = [lerror_merger[0], lerror_merger[0], lerror_merger[1], lerror_merger[1], lerror_merger[2], lerror_merger[2], lerror_merger[3], lerror_merger[3]]
+merger_lower_err = [uerror_merger[0], uerror_merger[0], uerror_merger[1], uerror_merger[1], uerror_merger[2], uerror_merger[2], uerror_merger[3], uerror_merger[3]] 
 
-no_merger_ad = [-20.56, -20.56, 2.64, 2.64, 63.9, 63.9, 91.60, 91.60]
-no_merger_upper_err = [6.12, 6.12, 3.71, 3.71, 9.75, 9.75, 14.72, 14.72]
-no_merger_lower_err = [9.22, 9.22, 12.19, 12.19, 25.94, 25.94, 30.07, 30.07]
+no_merger_ad =        [median_no[0], median_no[0], median_no[1], median_no[1], median_no[2], median_no[2], median_no[3], median_no[3]]
+no_merger_upper_err = [lerror_no[0], lerror_no[0], lerror_no[1], lerror_no[1], lerror_no[2], lerror_no[2], lerror_no[3], lerror_no[3]]
+no_merger_lower_err = [uerror_no[0], uerror_no[0], uerror_no[1], uerror_no[1], uerror_no[2], uerror_no[2], uerror_no[3], uerror_no[3]]
 
 single_plot()
 plt.plot([illustris_age[0], illustris_age[1]], [merger_ad[0],merger_ad[1]], color='cornflowerblue', linestyle='--')
@@ -52,7 +54,7 @@ eb = plt.errorbar(m31_age, m31_ad, yerr=[m31_lower_err, m31_upper_err], xerr=[m3
 eb[-1][0].set_linestyle(':')
 plt.xlabel(r'$ \rm Stellar\ Age\ (yr)$', fontsize=16)
 plt.ylabel(r'$ \rm Asymmetric\ Drift:\ \itv_{a}\ \rm(km\ s^{-1})$', fontsize=16)
-plt.ylim(-35, 130)
+plt.ylim(-35, 150)
 plt.xscale('log')
 plt.legend(loc=2, frameon=False, fontsize=13)
 plt.annotate(r'$\rm Quirk\ et\ al.\ 2019$', (5.55e7, 108), fontsize=13)
