@@ -34,13 +34,13 @@ import illustris_python as il
 basePath = '/Volumes/Titan/analogs/TNGdata/group_cat'
 halos = il.groupcat.loadHalos(basePath,99,fields=['GroupFirstSub', 'GroupPos', 'GroupVel', 'Group_M_TopHat200', 'Group_R_TopHat200']) #positions, velocities, and radius all in comoving/code units
 print('Read in the halos')
-subhalos = il.groupcat.loadSubhalos(basePath,99,fields=['SubhaloMassType', 'SubhaloVmax', 'SubhaloPos', 'SubhaloVel']) #mass in code units, vmax in km/s
+subhalos = il.groupcat.loadSubhalos(basePath,99,fields=['SubhaloMass','SubhaloMassType', 'SubhaloVmax', 'SubhaloPos', 'SubhaloVel', 'SubhaloMassInHalfRad', 'SubhaloHalfmassRadType']) #mass in code units, vmax in km/s
 print('Read in the subhalos')
 
 #step 2 -- find halos with correct halo mass
 h = 0.704 #0.72
 mass_min = 1 * (10**12 / 1e10) * h #7.30 * 10*11                                                            
-mass_max = 2 * (10**12 / 1e10) * h #2.21 * 10*12
+mass_max = 2.2 * (10**12 / 1e10) * h #2.21 * 10*12
 halo_mass = halos['Group_M_TopHat200']
 
 halo_cut = (mass_min < halo_mass) & (halo_mass < mass_max) 
@@ -56,6 +56,10 @@ sub_stellar_mass = sub_stellar_mass[first_sub]
 analog_pos = subhalos['SubhaloPos'][first_sub]
 analog_vel = subhalos['SubhaloVel'][first_sub]
 sub_vmax = subhalos['SubhaloVmax'][first_sub] #km/s, no weird unit
+sub_mass = subhalos['SubhaloMass'][first_sub]
+sub_mass_hlr = subhalos['SubhaloMassInHalfRad'][first_sub]
+sub_hlr = subhalos['SubhaloHalfmassRadType'].T[4]
+sub_hlr = sub_hlr[first_sub]
 print('Did the halo mass cut = {}'.format(sum(halo_cut)))
 
 #step 3 -- look at subhalo catalogue and find analogs that pass a stellar mass and vmax cut
@@ -70,10 +74,17 @@ analog_halo_mass = analog_halo_mass[M31_analog]
 halo_ID = first_sub[M31_analog]
 sub_stellar_mass = sub_stellar_mass[M31_analog]
 sub_vmax = sub_vmax[M31_analog]
+sub_mass = sub_mass[M31_analog]
+sub_mass_hlr = sub_mass_hlr[M31_analog]
+sub_hlr = sub_hlr[M31_analog]
 print('Did the stellar mass and vmax cut = {}'.format(sum(M31_analog)))
 
 #step 4 -- save data of the halos
-np.savetxt('/Users/amandaquirk/Desktop/M31analogs_halo_props_TNG100_revised.txt', np.c_[halo_ID, analog_pos[:,0], analog_pos[:,1], analog_pos[:,2], analog_vel[:,0], analog_vel[:,1], analog_vel[:,2], analog_halo_mass, sub_stellar_mass, sub_vmax], header='ID, analog position x y z (ckpc/h), analog velocity vx vy vz (km/s/a), halo mass (10^10 Msun/h), stellar mass (10^10 Msun/h), vmax (km/s)')  
+np.savetxt('/Users/amandaquirk/Desktop/M31analogs_halo_props_TNG100_revised_subhalomass.txt', np.c_[halo_ID, analog_pos[:,0], analog_pos[:,1], analog_pos[:,2], analog_vel[:,0], analog_vel[:,1], analog_vel[:,2], analog_halo_mass, sub_stellar_mass, sub_vmax, sub_mass_hlr, sub_hlr], header='ID, analog position x y z (ckpc/h), analog velocity vx vy vz (km/s/a), halo mass (10^10 Msun/h), stellar mass (10^10 Msun/h), vmax (km/s), mass in stellar hlr (10^10 Msun/h), stellar hlr (ckpc/h)')
+
+#checking IDs of analogs with vmax < 200
+slow = sub_vmax < 200
+print(halo_ID[slow])  
 
 '''
 ==================================================================================================================================
