@@ -3,6 +3,4 @@
 1) halo mass cut 1e12 < halo_mass < 2.2e12 Msun
 2) stellar mass cut 5e10 < stellar_mass < 2e11 Msun
 
-NO v max cut.
-
-This gives 158 analogs. However, one analog apparently has no gas particles, so it really gives 157.
+vmax > 200 km/s
