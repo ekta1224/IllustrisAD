@@ -31,7 +31,7 @@ def rotate_original_all(id):
     v2 = np.array([vx,vy,vz]).T
     
     #apply rotation
-    newr, newv = RotateFrame(r2, v2)
+    newr, newv, lnorm1 = RotateFrame(r2, v2)
     np.savetxt('/Users/ektapatel/Desktop/rotated_data/%s_gas_properties_TNGv2_rotated.txt'%id, np.column_stack((newr[:,0], newr[:,1], newr[:,2], newv[:,0], newv[:,1], newv[:,2],m, nh, sfr, gz)), delimiter="  ")
 
 
@@ -51,15 +51,20 @@ def rotate_original_all(id):
     vz = stars[:,5] - v1[2]
     v2 = np.array([vx,vy,vz]).T
         
-    newr, newv = RotateFrame(r2, v2)
+    newr, newv, lnorm2 = RotateFrame(r2, v2)
     np.savetxt('/Users/ektapatel/Desktop/rotated_data/%s_star_properties_TNGv2_rotated.txt'%id, np.column_stack((newr[:,0], newr[:,1], newr[:,2], newv[:,0], newv[:,1], newv[:,2],m, tform, gz)), delimiter="  ")
+    lnormz = np.array([0,0,1])
+    print(np.degrees(np.arccos(np.dot(lnorm1,lnormz))), np.degrees(np.arccos(np.dot(lnorm2,lnormz))))
 
-    return 0
+    return np.degrees(np.arccos(np.dot(lnorm1,lnorm2)))
 
 if __name__ == "__main__":
 
     ids = np.loadtxt('M31analogs_halo_props_TNG100_revised.txt')[:,0]
     print(ids, len(ids))
-
+    angs = []
     for id in ids: 
-        rotate_original_all(int(id))
+        ang = rotate_original_all(int(id))
+        angs.append(ang)
+
+    np.savetxt('M31analogs_halo_angle_btwn_Lnorm_stars_gas_TNG100.txt', np.column_stack((ids, angs)))

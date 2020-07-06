@@ -33,7 +33,7 @@ def RotateFrame(posI,velI):
     pos = np.dot(R, posI.T).T
     vel = np.dot(R, velI.T).T
     
-    return pos, vel
+    return pos, vel, L_norm
 
 
 def rotate_original(id):
