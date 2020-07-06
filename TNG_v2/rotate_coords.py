@@ -67,4 +67,4 @@ if __name__ == "__main__":
         ang = rotate_original_all(int(id))
         angs.append(ang)
 
-    np.savetxt('M31analogs_halo_angle_btwn_Lnorm_stars_gas_TNG100.txt', np.column_stack((ids, angs)))
+    np.savetxt('M31analogs_angle_btwn_Lnorm_stars_gas_TNG100.txt', np.column_stack((ids, angs)))
