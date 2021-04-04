@@ -32,6 +32,7 @@ def get_ids_snaps(subhalo_id, snap_num):
         #access merger trees
         mpb1 = get(sub['trees']['sublink_mpb'])
         t = h5py.File(mpb1,'r')
+        print(t.keys())
         snapnums = t['SnapNum']
         subfindIDs = t['SubfindID']
         print(snapnums,subfindIDs)
@@ -53,7 +54,7 @@ def save_particle_data(masterid, subhalo_id, snap_num):
         saved_filename = get(url + "/cutout.hdf5",params) #hdf5 file with all the data
         f = h5py.File(saved_filename, 'r') #read the file in order to save the data
         
-        stars = f['PartType4']
+        stars = f['PartsType4']
         gas = f['PartType0']
         dm = f['PartType1']
         subhalo_id = int(subhalo_id)
@@ -104,7 +105,12 @@ if __name__ == "__main__":
         #halo_ids = np.loadtxt('M31analogs_MM1_4Gyr_mstar.txt')
         import time
 
-        
+
+        for halo in halo_ids:
+                allids, allsnaps = get_ids_snaps(halo, 135)
+                break
+        assert False
+
         for halo in halo_ids:
                 start = time.time()
                 allids, allsnaps = get_ids_snaps(halo, 135)
